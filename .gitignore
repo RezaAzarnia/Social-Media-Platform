@@ -9,6 +9,9 @@
 # testing
 /coverage
 
+#
+/public/uploads
+
 # next.js
 /.next/
 /out/
@@ -26,6 +29,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env*.local
 
 # vercel
@@ -34,3 +38,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/prisma/migrations
+/prisma/dev.db
+/prisma/dev.db-journal

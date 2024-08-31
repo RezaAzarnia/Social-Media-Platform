@@ -1,0 +1,126 @@
+@import url("https://fonts.googleapis.com/css2?family=Playwrite+AU+VIC:wght@100..400&family=Playwrite+BE+VLG:wght@100..400&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.sidebar-list-item {
+  @apply flex items-center gap-3 p-3 rounded-md hover:bg-primary-500 text-white text-[15px];
+  &.active {
+    @apply bg-primary-500;
+  }
+  &.active .icon path {
+    fill: white;
+  }
+
+  &:hover .icon path {
+    fill: white;
+  }
+}
+
+.label {
+  @apply text-off-white font-semibold block text-left capitalize;
+}
+.input {
+  @apply w-full bg-dark-4  p-3 rounded-md 
+  outline-none focus:shadow-md transition-all 
+  placeholder:text-sm placeholder:capitalize placeholder:text-slate-600
+  disabled:cursor-not-allowed disabled:bg-dark-3 disabled:text-light-3;
+}
+.menu-item {
+  .spinner-mini {
+    margin-right: 2px;
+    border-color: #ff5a5a;
+    border-right-color: transparent;
+  }
+  button {
+    @apply flex items-center capitalize w-full text-sm text-dark-1 px-2 py-3 transition-colors;
+    &:hover {
+      @apply text-white;
+      .spinner-mini {
+        border-color: white;
+        border-right-color: transparent;
+      }
+      svg path {
+        fill: white;
+      }
+    }
+  }
+}
+.active-menu {
+  animation: fade ease-in 0.2s;
+}
+
+@layer utilities {
+  input:-webkit-autofill {
+    background-color: #1f2937; /* Replace with your dark color */
+    color: white; /* Change text color if needed */
+  }
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid white;
+  border-right-color: transparent;
+  animation: rotate 1s linear infinite;
+  margin: auto;
+}
+.spinner-mini {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 2px solid white;
+  border-right-color: transparent;
+  animation: rotate 1s linear infinite;
+  margin: auto;
+}
+
+.modal {
+  @apply fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center z-30;
+}
+
+.modal.active {
+  animation: zoom linear 0.3s;
+}
+@keyframes zoom {
+  from {
+    scale: 0;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* handle the auto fill input colors */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  /* border: 1px solid #253341; */
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: #1f1f22;
+  box-shadow: 0 0 0px 1000px #1f1f22 inset;
+  transition: background-color 5000s ease-in-out 0s;
+  color: white;
+}

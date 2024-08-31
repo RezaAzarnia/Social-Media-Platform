@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String
+  username  String     @unique
+  email     String     @unique
+  password  String
+  bio       String?
+  posts     Post[]
+  likes     Like[]
+  saves     Save[]
+  followers Follower[] @relation("UserFollowers")
+  following Follower[] @relation("UserFollowing")
+
+  sessions Session[] @relation("UserSessions")
+
+  @@unique([email, username])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserSessions")
+  accessToken  String
+  refreshToken String
+  createdAt    DateTime @default(now())
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  caption   String
+  imageUrl  String
+  creator   User     @relation(fields: [creatorId], references: [id])
+  creatorId String
+  createdAt DateTime @default(now())
+  location  String
+  hashtags  String
+  likes     Like[]
+  savedBy   Save[]
+}
+
+model Save {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model Follower {
+  id          String @id @default(cuid())
+  followerId  String
+  followingId String
+  follower    User   @relation("UserFollowing", fields: [followerId], references: [id])
+  followed    User   @relation("UserFollowers", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+}
