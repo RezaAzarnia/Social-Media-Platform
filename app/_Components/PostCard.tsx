@@ -5,7 +5,6 @@ import LikeButton from "./LikeButton";
 import SaveButton from "./SaveButton";
 import { showCreatedTime } from "../utils/utils";
 import { Post } from "@/app/_types";
-import CardMenu from "./CardMenu";
 type Props = {
   post: Post;
   userId: string;
@@ -19,10 +18,7 @@ export default function PostCard({ post, userId }: Props) {
             {showCreatedTime(post.createdAt)}. {post.location}
           </span>
         </Avatar>
-
-        {post.creatorId === userId && <CardMenu postId={post.id} />}
       </div>
-
       <Link href={`/post/${post.id}`}>
         <div className="relative h-[450px] max-h-[400px] w-full">
           <Image

@@ -10,12 +10,11 @@ import Spinner from "./Spinner";
 type Props = {
   initialValues: { posts: Post[]; postsCount: number };
 };
-export default function MainPostList({initialValues} : Props) {
+export default function MainPostList({ initialValues }: Props) {
   const { ref, postsLength, posts, isLoading } = useInfinitScroll({
     initialValues,
     fetchFunction: getPosts,
     itemsCount: 3,
-    useContext: true,
   });
   const { data: user } = useSession();
 
@@ -36,7 +35,9 @@ export default function MainPostList({initialValues} : Props) {
         })
       )}
 
-      {!(posts.length >= postsLength) && <SpinnerMini ref={ref} />}
+      {!isLoading && !(posts.length >= postsLength) && (
+        <SpinnerMini ref={ref} />
+      )}
     </>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import React, { memo, useEffect } from "react";
+import React, { memo } from "react";
 import PostPreviewCard from "./PostPreviewCard";
 import useInfinitScroll from "@/app/_Components/useInfinitScroll";
 import SpinnerMini from "./SpinnerMini";
@@ -38,7 +38,6 @@ function PostsList({
     itemsCount,
   });
 
-
   return (
     <>
       <div className="flex flex-wrap gap-6">
@@ -49,7 +48,7 @@ function PostsList({
             return (
               <PostPreviewCard
                 post={post}
-                isShowLike={isShowLike ? isShowLike : false}
+                isShowLike={isShowLike ? true : false}
                 key={post.id}
               />
             );
@@ -57,7 +56,7 @@ function PostsList({
         ) : (
           render
         )}
-        {!isLoading && !(posts.length >= postsLength) && (
+        {!isLoading && !(posts?.length >= postsLength) && (
           <SpinnerMini ref={ref} />
         )}
       </div>

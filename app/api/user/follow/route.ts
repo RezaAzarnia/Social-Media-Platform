@@ -18,29 +18,40 @@ export async function POST(req: Request) {
           },
         },
       });
+
     if (isFollowedByRequester) {
+      //here i will delete the follow
+      await prisma.follower.delete({
+        where: {
+          followerId_followingId: {
+            followerId,
+            followingId,
+          },
+        },
+      });
+
       return NextResponse.json(
         {
-          status: 403,
-          message: "you have followed this user",
-          ok: false,
+          status: 200,
+          message: "you have unfollowd this user",
         },
         {
-          status: 403,
+          status: 200,
         }
       );
+    } else {
+      //follow user
+      await prisma.follower.create({
+        data: {
+          followerId,
+          followingId,
+        },
+      });
+      return NextResponse.json(
+        { status: 201, mesage: "follow has successfully added", ok: true },
+        { status: 201 }
+      );
     }
-
-    await prisma.follower.create({
-      data: {
-        followerId,
-        followingId,
-      },
-    });
-    return NextResponse.json(
-      { status: 201, mesage: "follow has successfully added", ok: true },
-      { status: 201 }
-    );
   } catch (error: any) {
     return NextResponse.json(
       {

@@ -10,7 +10,6 @@ import Logout from "@/app/_Icons/Logout";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import Avatar from "./Avatar";
-import { useRouter } from "next/navigation";
 
 const listItems = [
   { icon: <HomeIcon />, href: "/", text: "Home" },

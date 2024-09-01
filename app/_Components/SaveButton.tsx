@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { savePost, unSavePost } from "../_lib/actions";
-import { NextResponse } from "next/server";
+import { toggleSavePost } from "../_lib/actions";
 import Saved from "../_Icons/Saved";
 import Save from "../_Icons/Save";
 import { Post } from "../_types";
@@ -11,22 +10,14 @@ type Props = {
 };
 export default function SaveButton({ post }: Props) {
   const [isSaved, setIsSaved] = useState<boolean>(post.isSaved);
-  const handleToggleSave = async (
-    postId: string,
-    toggleFunction: (postId: string) => Promise<NextResponse>
-  ): Promise<void> => {
-    setIsSaved((prev) => !prev);
 
-    await toggleFunction(postId);
-    
+  const handleToggleSave = async (postId: string): Promise<void> => {
+    setIsSaved((prev) => !prev);
+    await toggleSavePost(postId);
   };
   return (
     <>
-      <button
-        onClick={async () =>
-          handleToggleSave(post.id, isSaved ? unSavePost : savePost)
-        }
-      >
+      <button onClick={() => handleToggleSave(post.id)}>
         {isSaved ? <Saved /> : <Save />}
       </button>
     </>

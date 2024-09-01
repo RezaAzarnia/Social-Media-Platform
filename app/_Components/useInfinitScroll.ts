@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
-import { usePostContext } from "./PostContextProvider";
 import { Post } from "../_types";
 
 type FecthParams = {
@@ -19,7 +18,6 @@ type Props = {
   ) => Promise<{ posts: Post[]; postsCount: number }>;
   params?: { searchValue?: string; username?: string };
   itemsCount?: number;
-  useContext?: boolean;
 };
 
 export default function useInfinitScroll({
@@ -27,15 +25,19 @@ export default function useInfinitScroll({
   fetchFunction,
   params,
   itemsCount,
-  useContext,
 }: Props) {
   const { ref, inView } = useInView();
   const [page, setPage] = useState<number>(1);
-  const [posts, setPosts] = useState<Post[]>(initialValues.posts);
-  const postsCount: number = initialValues.postsCount;
+  const [posts, setPosts] = useState<Post[]>(initialValues?.posts);
+  const postsCount:number = initialValues?.postsCount;
   const [isLoading, setIsLoading] = useState(true);
 
-  const contextValue = usePostContext();
+
+  useEffect(() => {
+    if (posts) {
+      setIsLoading(false);
+    }
+  }, [posts]);
 
   const getNewPosts = async () => {
     const nextPage = page + 1;
@@ -54,16 +56,6 @@ export default function useInfinitScroll({
   };
 
   useEffect(() => {
-    if (posts) {
-      setIsLoading(false);
-    }
-    if (useContext) {
-      contextValue.setPosts(posts);
-      contextValue.setPostsLength(postsCount);
-    }
-  }, [posts]);
-
-  useEffect(() => {
     if (inView) {
       getNewPosts();
     }
@@ -71,8 +63,8 @@ export default function useInfinitScroll({
 
   return {
     ref,
-    posts: useContext ? contextValue.posts : posts,
-    postsLength: useContext ? contextValue.postsLength : postsCount,
+    posts,
+    postsLength: postsCount,
     isLoading,
   };
 }
