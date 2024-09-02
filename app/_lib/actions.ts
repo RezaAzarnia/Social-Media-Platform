@@ -130,9 +130,9 @@ export async function toggleFollow(followingId: string): Promise<NextResponse> {
     body: JSON.stringify({ followerId: session?.userId, followingId }),
   });
   const data = await response?.json();
+  // revalidatePath("/account")
   return data;
 }
-
 
 export async function getUserActivity({
   searchValue,
@@ -158,7 +158,7 @@ export async function search({
   postsCount: number;
 }> {
   const response = await fetch(
-    `${process.env.API_URL}/api/search?query=${searchValue && searchValue}&take=${limit}&skip=${page}`,
+    `${process.env.API_URL}/api/explorePosts?query=${searchValue}&take=${limit}&skip=${page}`,
     {
       method: "GET",
     }
@@ -215,7 +215,7 @@ export async function toggleSavePost(postId: string): Promise<NextResponse> {
     body: JSON.stringify({ userId: session?.userId, postId }),
   });
   const data = await response?.json();
-  revalidatePath("saved");
+  revalidatePath("/saved");
 
   return data;
 }
@@ -259,5 +259,13 @@ export async function createNewPost(values: FormData) {
   if (data.status === 201) {
     redirect("/");
   }
+  return data;
+}
+
+export async function getTopTrandsPosts({ limit, page }: PaginationProps) {
+  const response = await fetch(
+    `${process.env.API_URL}/api/post/topTrends?&take=${limit}&skip=${page}`
+  );
+  const data = await response.json();
   return data;
 }

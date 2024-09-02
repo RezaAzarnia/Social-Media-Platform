@@ -39,8 +39,7 @@ export async function GET(req: Request): Promise<NextResponse> {
           },
         },
       });
-      console.log('searched posts');
-      console.log(posts);
+
       const postsCount = await prisma.post.count({
         where: {
           OR: [

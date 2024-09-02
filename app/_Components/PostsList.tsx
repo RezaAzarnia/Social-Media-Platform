@@ -37,7 +37,7 @@ function PostsList({
     params,
     itemsCount,
   });
-
+console.log(postsLength);
   return (
     <>
       <div className="flex flex-wrap gap-6">

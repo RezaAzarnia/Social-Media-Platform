@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { Post } from "../_types";
 
@@ -29,9 +29,8 @@ export default function useInfinitScroll({
   const { ref, inView } = useInView();
   const [page, setPage] = useState<number>(1);
   const [posts, setPosts] = useState<Post[]>(initialValues?.posts);
-  const postsCount:number = initialValues?.postsCount;
+  const postsCount: number = initialValues?.postsCount;
   const [isLoading, setIsLoading] = useState(true);
-
 
   useEffect(() => {
     if (posts) {
@@ -39,7 +38,7 @@ export default function useInfinitScroll({
     }
   }, [posts]);
 
-  const getNewPosts = async () => {
+  const getNewPosts= useCallback(async () => {
     const nextPage = page + 1;
     const param = {
       ...params,
@@ -53,7 +52,7 @@ export default function useInfinitScroll({
       setPosts([...posts, ...newPosts.posts]);
       setPage(nextPage);
     }
-  };
+  }, [inView]);
 
   useEffect(() => {
     if (inView) {
