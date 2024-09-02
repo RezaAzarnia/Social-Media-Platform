@@ -4,7 +4,6 @@ import LikeButton from "./LikeButton";
 import Link from "next/link";
 import { Post } from "../_types";
 import Avatar from "./Avatar";
-import SaveButton from "./SaveButton";
 type Props = {
   post: Post;
   isShowLike?: boolean;

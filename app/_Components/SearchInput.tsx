@@ -8,19 +8,17 @@ export default function SearchInput() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const deafultValue = searchParams.get("query");
-  const [searchValue, setSearchValue] = useState<string | null>(deafultValue);
+  const deafultValue = searchParams.get("query") ?? ""
+  const [searchValue, setSearchValue] = useState<string>(deafultValue);
 
   const handleSearch = debounce((value: string) => {
     const params = new URLSearchParams(searchParams);
     params.set("query", value);
     router.replace(`${pathname.toString()}?${params.toString().toLowerCase()}`);
-  }, 200);
+  }, 350);
 
   useEffect(() => {
-    if (searchValue) {
-      handleSearch(searchValue);
-    }
+    handleSearch(searchValue);
   }, [searchValue]);
   return (
     <div className="flex">

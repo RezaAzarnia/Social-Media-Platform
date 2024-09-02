@@ -45,8 +45,7 @@ export async function GET(req: Request, { params: { username } }: Props) {
           },
         },
       });
-      // console.log(".//////////////////////////////////////////");
-      // console.log(userCreatedPosts);
+
       postsCount = postsLength;
       userCreatedPosts.map((post) => {
         posts.push(post);

@@ -7,6 +7,7 @@ import {
   AuthenticatedUser,
   Post,
 } from "../_types";
+
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { auth, unstable_update } from "./auth";
@@ -19,7 +20,7 @@ type PaginationProps = {
 export async function regsiterUser(
   userValues: NewUserDetails
 ): Promise<NextResponse> {
-  const response = await fetch("http://localhost:3000/api/register", {
+  const response = await fetch(`${process.env.API_URL}/api/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -32,7 +33,7 @@ export async function regsiterUser(
 export async function loginHandler(
   userValues: LoginCredentials
 ): Promise<Response> {
-  const response = await fetch("http://localhost:3000/api/login", {
+  const response = await fetch(`${process.env.API_URL}/api/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -45,7 +46,7 @@ export async function loginHandler(
 export async function getMe(): Promise<AuthenticatedUser> {
   const session = await auth();
   const response = await fetch(
-    `http://localhost:3000/api/me?userId=${session?.userId}`,
+    `${process.env.API_URL}/api/user/me?userId=${session?.userId}`,
     {
       method: "GET",
       headers: {
@@ -62,7 +63,7 @@ export async function getProfile(
   userId: string
 ): Promise<{ profile: AuthenticatedUser }> {
   const response = await fetch(
-    `http://localhost:3000/api/profile/${username}?userId=${userId}`,
+    `${process.env.API_URL}/api/user/profile/${username}?userId=${userId}`,
     {
       method: "GET",
       headers: {
@@ -81,7 +82,7 @@ export async function getProfile(
 export async function getUsers(): Promise<{ data: AuthenticatedUser[] }> {
   const session = await auth();
   const response = await fetch(
-    `http://localhost:3000/api/users/${session?.userId}`,
+    `${process.env.API_URL}/api/user/${session?.userId}`,
     {
       method: "GET",
       headers: {
@@ -96,13 +97,16 @@ export async function getUsers(): Promise<{ data: AuthenticatedUser[] }> {
 export async function updateUser(
   userValues: AuthenticatedUser
 ): Promise<{ status: number; newUserInfo: AuthenticatedUser }> {
-  const response = await fetch(`http://localhost:3000/api/updateProfile`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(userValues),
-  });
+  const response = await fetch(
+    `${process.env.API_URL}/api/user/profile/update`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userValues),
+    }
+  );
   const { newUserInfo, status } = await response.json();
   console.log(newUserInfo);
   if (status === 200) {
@@ -115,10 +119,10 @@ export async function updateUser(
   return { status, newUserInfo };
 }
 
-export async function followUser(followingId: string): Promise<NextResponse> {
+export async function toggleFollow(followingId: string): Promise<NextResponse> {
   const session = await auth();
 
-  const response = await fetch("http://localhost:3000/api/follow", {
+  const response = await fetch(`${process.env.API_URL}/api/user/follow`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -126,68 +130,7 @@ export async function followUser(followingId: string): Promise<NextResponse> {
     body: JSON.stringify({ followerId: session?.userId, followingId }),
   });
   const data = await response?.json();
-  // revalidatePath('/account')
-  return data;
-}
-
-export async function unFollowUser(followingId: string): Promise<NextResponse> {
-  const session = await auth();
-  const response = await fetch("http://localhost:3000/api/unfollow", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ followerId: session?.userId, followingId }),
-  });
-  const data = await response?.json();
-  // revalidatePath('/account')
-
-  return data;
-}
-
-export async function likePost(postId: string): Promise<NextResponse> {
-  const session = await auth();
-  const response = await fetch("http://localhost:3000/api/like", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId: session?.userId, postId }),
-  });
-  const data = await response?.json();
-  return data;
-}
-
-export async function disLikePost(postId: string): Promise<NextResponse> {
-  const session = await auth();
-  const response = await fetch("http://localhost:3000/api/dislike", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId: session?.userId, postId }),
-  });
-  const data = await response?.json();
-
-  return data;
-}
-
-export async function getSinglePost(
-  postId: string
-): Promise<{ post: Post; relatedPosts: Post[] }> {
-  const session = await auth();
-  const response = await fetch(
-    `http://localhost:3000/api/posts/${postId}?userId=${session?.userId}`,
-    {
-      method: "GET",
-      next: { tags: ["singlePost"] },
-    }
-  );
-  const data = await response.json();
-  if (data.status === 404) {
-    notFound();
-  }
-
+  // revalidatePath("/account")
   return data;
 }
 
@@ -199,22 +142,10 @@ export async function getUserActivity({
 }: PaginationProps & { searchValue?: string; username?: string }) {
   const session = await auth();
   const response = await fetch(
-    `http://localhost:3000/api/profile/activity/${username}?&requestQuery=${searchValue}&userId=${session?.userId}&take=${limit}&skip=${page}`
+    `${process.env.API_URL}/api/user/profile/activity/${username}?
+     &requestQuery=${searchValue}&userId=${session?.userId}&take=${limit}&skip=${page}`
   );
   const data = await response.json();
-  return data;
-}
-
-export async function createNewPost(values: FormData) {
-  const response = await fetch(`http://localhost:3000/api/createPost`, {
-    method: "POST",
-    body: values,
-  });
-
-  const data = await response.json();
-  if (data.status === 201) {
-    redirect("/");
-  }
   return data;
 }
 
@@ -227,25 +158,11 @@ export async function search({
   postsCount: number;
 }> {
   const response = await fetch(
-    `http://localhost:3000/api/search?query=${searchValue && searchValue}&take=${limit}&skip=${page}`,
+    `${process.env.API_URL}/api/explorePosts?query=${searchValue}&take=${limit}&skip=${page}`,
     {
       method: "GET",
     }
   );
-  const data = await response.json();
-  return data;
-}
-
-export async function deletePost(
-  postId: string
-): Promise<NextResponse & { postsLength: number }> {
-  const response = await fetch("http://localhost:3000/api/deletePost", {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ postId }),
-  });
   const data = await response.json();
   return data;
 }
@@ -256,15 +173,28 @@ export async function getPosts({
 }: PaginationProps): Promise<{ posts: Post[]; postsCount: number }> {
   const user = await auth();
   const response = await fetch(
-    `http://localhost:3000/api/posts?userId=${user?.userId}&take=${limit}&skip=${page}`
+    `${process.env.API_URL}/api/post/all?userId=${user?.userId}&take=${limit}&skip=${page}`
   );
   const posts = await response.json();
   return posts;
 }
+export async function deletePost(
+  postId: string
+): Promise<NextResponse & { postsLength: number }> {
+  const response = await fetch(`${process.env.API_URL}/api/post/delete`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ postId }),
+  });
+  const data = await response.json();
+  return data;
+}
 export async function getUserSavedPosts({ page, limit }: PaginationProps) {
   const session = await auth();
   const response = await fetch(
-    `http://localhost:3000/api/savedPosts?userId=${session?.userId}&take=${limit}&skip=${page}`,
+    `${process.env.API_URL}/api/post/savedPosts?userId=${session?.userId}&take=${limit}&skip=${page}`,
     {
       next: {
         tags: ["saved"],
@@ -275,9 +205,9 @@ export async function getUserSavedPosts({ page, limit }: PaginationProps) {
   const savedPosts = await response.json();
   return savedPosts;
 }
-export async function savePost(postId: string): Promise<NextResponse> {
+export async function toggleSavePost(postId: string): Promise<NextResponse> {
   const session = await auth();
-  const response = await fetch("http://localhost:3000/api/savePost", {
+  const response = await fetch(`${process.env.API_URL}/api/post/save`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -285,13 +215,13 @@ export async function savePost(postId: string): Promise<NextResponse> {
     body: JSON.stringify({ userId: session?.userId, postId }),
   });
   const data = await response?.json();
-  revalidatePath("saved");
+  revalidatePath("/saved");
 
   return data;
 }
-export async function unSavePost(postId: string): Promise<NextResponse> {
+export async function toggleLikePost(postId: string): Promise<NextResponse> {
   const session = await auth();
-  const response = await fetch("http://localhost:3000/api/unSavePost", {
+  const response = await fetch(`${process.env.API_URL}/api/post/like`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -299,7 +229,43 @@ export async function unSavePost(postId: string): Promise<NextResponse> {
     body: JSON.stringify({ userId: session?.userId, postId }),
   });
   const data = await response?.json();
-  revalidatePath("saved");
+  return data;
+}
+export async function getSinglePost(
+  postId: string
+): Promise<{ post: Post; relatedPosts: Post[] }> {
+  const session = await auth();
+  const response = await fetch(
+    `${process.env.API_URL}/api/post/${postId}?userId=${session?.userId}`,
+    {
+      method: "GET",
+      next: { tags: ["singlePost"] },
+    }
+  );
+  const data = await response.json();
+  if (data.status === 404) {
+    notFound();
+  }
 
+  return data;
+}
+export async function createNewPost(values: FormData) {
+  const response = await fetch(`${process.env.API_URL}/api/post/create`, {
+    method: "POST",
+    body: values,
+  });
+
+  const data = await response.json();
+  if (data.status === 201) {
+    redirect("/");
+  }
+  return data;
+}
+
+export async function getTopTrandsPosts({ limit, page }: PaginationProps) {
+  const response = await fetch(
+    `${process.env.API_URL}/api/post/topTrends?&take=${limit}&skip=${page}`
+  );
+  const data = await response.json();
   return data;
 }

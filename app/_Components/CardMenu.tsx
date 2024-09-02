@@ -6,10 +6,7 @@ import Edit from "../_Icons/Edit";
 import { toast } from "react-toastify";
 import SpinnerMini from "./SpinnerMini";
 import { deletePost } from "../_lib/actions";
-import { usePostContext } from "./PostContextProvider";
-import { usePathname, useRouter } from "next/navigation";
-import { revalidatePath } from "next/cache";
-import { Post } from "../_types";
+import { useRouter } from "next/navigation";
 
 type Props = {
   postId: string;
@@ -18,8 +15,6 @@ export default function CardMenu({ postId }: Props) {
   const [isShowMenu, setIsShowMenu] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
 
-  const { posts, setPosts, setPostsLength } = usePostContext();
-  const pathname = usePathname();
   const router = useRouter();
 
   const showWarningMessage = (): void => {
@@ -35,15 +30,7 @@ export default function CardMenu({ postId }: Props) {
       //delete the post
       const response = await deletePost(postId);
       if (response.status === 200) {
-        //filter posts to prevent revalidate all posts
-        const filteredPosts = posts.filter((post: Post) => post.id !== postId);
-        setPosts(filteredPosts);
-        setPostsLength(response.postsLength);
-        //redirect the user to main page if the user in the signle post page
-        if (pathname.includes("/post")) {
-          router.push("/");
-          revalidatePath("/");
-        }
+        router.push("/");
       }
     });
   };

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { ToastContainer } from "react-toastify";
 import { Inter } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
-import { PostContextProvider } from "./_Components/PostContextProvider";
 import Layout from "./_Components/Layout";
 import "@/app/_styles/globals.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,9 +23,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <ToastContainer />
         <SessionProvider>
-          <PostContextProvider>
             <Layout>{children}</Layout>
-          </PostContextProvider>
         </SessionProvider>
       </body>
     </html>

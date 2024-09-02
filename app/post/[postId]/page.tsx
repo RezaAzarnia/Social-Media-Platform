@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React  from "react";
 import { getSinglePost } from "@/app/_lib/actions";
 import { auth } from "@/app/_lib/auth";
 import Image from "next/image";
