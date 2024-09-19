@@ -34,39 +34,6 @@ export async function GET(req: Request, { params: { postId } }: Props) {
         },
       },
     });
-    const relatedPosts = await prisma.post.findMany({
-      take: 6,
-      where: {
-        id: {
-          not: post?.id,
-        },
-        OR: [
-          {
-            hashtags: {
-              contains: post?.hashtags,
-            },
-          },
-          {
-            caption: {
-              contains: post?.caption,
-            },
-          },
-          {
-            location: {
-              contains: post?.location,
-            },
-          },
-        ],
-      },
-      include: {
-        creator: {
-          select: {
-            username: true,
-            name: true,
-          },
-        },
-      },
-    });
 
     if (post) {
       const newValues: Post = {
@@ -79,7 +46,6 @@ export async function GET(req: Request, { params: { postId } }: Props) {
         {
           status: 200,
           post: newValues,
-          relatedPosts,
         },
         {
           status: 200,

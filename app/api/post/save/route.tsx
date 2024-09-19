@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       );
     } else {
       //save the post
-      await prisma.save.create({
+      const p = await prisma.save.create({
         data: {
           userId,
           postId,
@@ -46,11 +46,11 @@ export async function POST(req: Request) {
         { status: 201 }
       );
     }
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
       {
         status: 500,
-        message: "Internal Server Error",
+        message: error?.message || "Internal Server Error",
       },
       { status: 500 }
     );

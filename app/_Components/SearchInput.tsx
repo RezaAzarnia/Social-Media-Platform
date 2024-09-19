@@ -15,7 +15,7 @@ export default function SearchInput() {
     const params = new URLSearchParams(searchParams);
     params.set("query", value);
     router.replace(`${pathname.toString()}?${params.toString().toLowerCase()}`);
-  }, 350);
+  }, 900);
 
   useEffect(() => {
     handleSearch(searchValue);

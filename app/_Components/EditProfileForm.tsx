@@ -10,12 +10,14 @@ import Textarea from "./Textarea";
 import { updateUser } from "../_lib/actions";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useSWRConfig } from "swr";
 type Props = {
   session: AuthenticatedUser;
 };
-export default function EditProfileForm({ session }: Props) {
-  const { update } = useSession();
 
+export default function EditProfileForm({ session }: Props) {
+  const { cache, mutate } = useSWRConfig();
+  const { update } = useSession();
   const methods = useForm<AuthenticatedUser>({
     resolver: zodResolver(editUserSchema),
   });
@@ -33,6 +35,9 @@ export default function EditProfileForm({ session }: Props) {
         name: newUserInfo.name,
         user: { name: newUserInfo.name },
       });
+
+      mutate((key: string) => key.includes(`/api/users/${session.username}`));
+
       router.push(`/account/${newUserInfo.username}`);
     }
   };
@@ -42,20 +47,20 @@ export default function EditProfileForm({ session }: Props) {
         <Input
           name="name"
           label="Name"
-          defaultValue={session.name}
+          defaultValue={session?.name}
           placeholder="enter your name!"
         />
         <Input
           name="username"
           label="username"
-          defaultValue={session.username}
+          defaultValue={session?.username}
           placeholder="your name!"
           disabled={true}
         />
         <Input
           name="email"
           label="email"
-          defaultValue={session.email}
+          defaultValue={session?.email}
           placeholder="your email!"
           disabled
         />
@@ -64,8 +69,8 @@ export default function EditProfileForm({ session }: Props) {
           label="password"
           placeholder="enter your new password"
         />
-        <Input name="userId" type="hidden" defaultValue={session.id} />
-        <Textarea name="bio" defaultValue={session.bio} />
+        <Input name="userId" type="hidden" defaultValue={session?.id} />
+        <Textarea name="bio" defaultValue={session?.bio} />
         <div className="flex justify-end gap-1">
           <button className="px-8 rounded-md bg-dark-4">Cancel</button>
           <div className="w-[13%]">

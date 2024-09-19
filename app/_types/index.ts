@@ -44,3 +44,16 @@ export type LikeResponse = {
   postId: string;
   createdAt: Date;
 };
+
+export type ProfileType = {
+  id: string;
+  bio: string;
+  email: string;
+  isCurrentUserProfile: boolean;
+  isFollowing: boolean;
+  name: string;
+  password: string;
+  username: string;
+  _count: Record<string, number>;
+  // _count: { posts: 1; followers: 0; following: 1 };
+};

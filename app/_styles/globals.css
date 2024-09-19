@@ -25,29 +25,7 @@
   placeholder:text-sm placeholder:capitalize placeholder:text-slate-600
   disabled:cursor-not-allowed disabled:bg-dark-3 disabled:text-light-3;
 }
-.menu-item {
-  .spinner-mini {
-    margin-right: 2px;
-    border-color: #ff5a5a;
-    border-right-color: transparent;
-  }
-  button {
-    @apply flex items-center capitalize w-full text-sm text-dark-1 px-2 py-3 transition-colors;
-    &:hover {
-      @apply text-white;
-      .spinner-mini {
-        border-color: white;
-        border-right-color: transparent;
-      }
-      svg path {
-        fill: white;
-      }
-    }
-  }
-}
-.active-menu {
-  animation: fade ease-in 0.2s;
-}
+
 
 @layer utilities {
   input:-webkit-autofill {
@@ -64,6 +42,9 @@
   border-right-color: transparent;
   animation: rotate 1s linear infinite;
   margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
 }
 .spinner-mini {
   width: 15px;

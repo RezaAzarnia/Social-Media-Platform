@@ -1,6 +1,6 @@
 import prisma from "@/app/_lib/db";
 import { NextResponse } from "next/server";
-import fs from "fs"; 
+import fs from "fs";
 import path from "path";
 
 export async function DELETE(req: Request) {
@@ -28,7 +28,6 @@ export async function DELETE(req: Request) {
 
     // مسیر عکس از پست دریافت شده
     const imagePath = path.join(process.cwd(), "public", post.imageUrl);
-
     // حذف عکس از پوشه public/uploads
     if (fs.existsSync(imagePath)) {
       fs.unlinkSync(imagePath);
