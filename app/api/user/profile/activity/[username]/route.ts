@@ -5,11 +5,13 @@ type Props = {
   params: { username: string };
 };
 export async function GET(req: Request, { params: { username } }: Props) {
-  const url = new URL(req.url);
-  const skip: number = Number(url.searchParams.get("skip")) || 0;
-  const take: number = Number(url.searchParams.get("take")) || 5;
-  let requestQuery = url.searchParams.get("requestQuery") ?? "userPosts";
-  const userId: string = url.searchParams.get("userId") as string;
+  const searchParams = new URL(req.url).searchParams;
+  const skip: number = Number(searchParams.get("skip")) || 0;
+  const take: number = Number(searchParams.get("take")) || 5;
+
+  let requestQuery = searchParams.get("requestQuery") ?? "userPosts";
+
+  const userId: string = searchParams.get("userId") as string;
 
   const user: AuthenticatedUser | null = (await prisma.user.findUnique({
     where: { username },
@@ -17,7 +19,7 @@ export async function GET(req: Request, { params: { username } }: Props) {
 
   const posts = [];
   let postsCount = 0;
-  // check if the logged in user id oppisite of the id of the username in that case show the user posts
+  //preventing access to other users liked posts by change url
   if (requestQuery === "liked" && userId !== user?.id) {
     requestQuery = "userPosts";
   }
@@ -43,19 +45,37 @@ export async function GET(req: Request, { params: { username } }: Props) {
               name: true,
             },
           },
+          likes: {
+            where: { userId },
+          },
+          savedBy: {
+            where: { userId },
+          },
+          _count: {
+            select: {
+              likes: true,
+            },
+          },
         },
       });
 
-      postsCount = postsLength;
-      userCreatedPosts.map((post) => {
-        posts.push(post);
+      const isLikedAndSavedByUser: Post[] = userCreatedPosts.map((post) => {
+        return {
+          ...post,
+          isLiked: post.likes.length > 0,
+          isSaved: post.savedBy.length > 0,
+        };
       });
+
+      postsCount = postsLength;
+      posts.push(...isLikedAndSavedByUser);
     } else if (requestQuery === "liked" && userId === user?.id) {
       const postsLength = await prisma.like.count({
         where: {
           userId,
         },
       });
+
       const userLikedPosts = await prisma.like.findMany({
         skip: (skip - 1) * take,
         take: take,
@@ -74,17 +94,38 @@ export async function GET(req: Request, { params: { username } }: Props) {
                   name: true,
                 },
               },
+              savedBy: {
+                where: { userId },
+              },
+              likes: { where: { userId } },
+              _count: {
+                select: {
+                  likes: true, // تعداد کل لایک‌ها
+                },
+              },
             },
           },
         },
       });
-      posts.push(userLikedPosts.map((post) => post.post));
+
+      const isLikedAndSavedByUser = userLikedPosts.map((p) => {
+        const { post } = p;
+        const newValues = {
+          ...post,
+          isLiked: post.likes.length > 0,
+          isSaved: post.savedBy.length > 0,
+        };
+        const { likes, savedBy, ...newItem } = newValues;
+        return newItem;
+      });
+
+      posts.push(...isLikedAndSavedByUser);
       postsCount = postsLength;
     }
     return NextResponse.json(
       {
         status: 200,
-        posts: posts.flat(),
+        posts: posts,
         postsCount,
       },
       {

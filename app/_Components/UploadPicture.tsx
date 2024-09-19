@@ -11,11 +11,9 @@ export default function UploadPicture({ name }: Props) {
     register,
     formState: { errors },
     setValue,
-    watch,
   } = useFormContext();
   const [previewPic, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-console.log(watch(name));
   const convertImageToUrl = (imgFile: File): void => {
     if (imgFile) {
       const path = URL.createObjectURL(imgFile);
@@ -60,7 +58,7 @@ console.log(watch(name));
       }
     }
   };
-
+  //prevent to make input file empty
   const handleClickFileInput = (): void => {
     if (fileInputRef.current) {
       fileInputRef.current.click();

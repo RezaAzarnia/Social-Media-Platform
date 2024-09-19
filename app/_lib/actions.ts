@@ -1,21 +1,25 @@
 "use server";
 
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import {
   NewUserDetails,
   LoginCredentials,
   AuthenticatedUser,
   Post,
+  ProfileType,
 } from "../_types";
 
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { auth, unstable_update } from "./auth";
 
 type PaginationProps = {
   page: number;
   limit: number;
 };
+interface PostsResult {
+  posts: Post[];
+  postsCount: number;
+}
 
 export async function regsiterUser(
   userValues: NewUserDetails
@@ -59,11 +63,11 @@ export async function getMe(): Promise<AuthenticatedUser> {
 }
 
 export async function getProfile(
-  username: string,
-  userId: string
-): Promise<{ profile: AuthenticatedUser }> {
+  username: string
+): Promise<{ profile: ProfileType }> {
+  const session = await auth();
   const response = await fetch(
-    `${process.env.API_URL}/api/user/profile/${username}?userId=${userId}`,
+    `${process.env.API_URL}/api/user/profile/${username}?userId=${session?.userId}`,
     {
       method: "GET",
       headers: {
@@ -72,14 +76,13 @@ export async function getProfile(
     }
   );
   const data = await response.json();
-  console.log(data);
   if (data.status === 404) {
     notFound();
   }
   return data;
 }
 
-export async function getUsers(): Promise<{ data: AuthenticatedUser[] }> {
+export async function getUsers(): Promise<{ data: ProfileType[] }> {
   const session = await auth();
   const response = await fetch(
     `${process.env.API_URL}/api/user/${session?.userId}`,
@@ -97,6 +100,7 @@ export async function getUsers(): Promise<{ data: AuthenticatedUser[] }> {
 export async function updateUser(
   userValues: AuthenticatedUser
 ): Promise<{ status: number; newUserInfo: AuthenticatedUser }> {
+  // console.log(userValues);
   const response = await fetch(
     `${process.env.API_URL}/api/user/profile/update`,
     {
@@ -130,7 +134,6 @@ export async function toggleFollow(followingId: string): Promise<NextResponse> {
     body: JSON.stringify({ followerId: session?.userId, followingId }),
   });
   const data = await response?.json();
-  // revalidatePath("/account")
   return data;
 }
 
@@ -153,31 +156,15 @@ export async function search({
   page,
   limit,
   searchValue,
-}: PaginationProps & { searchValue?: string }): Promise<{
-  posts: Post[];
-  postsCount: number;
-}> {
+}: PaginationProps & { searchValue?: string }): Promise<PostsResult> {
+  const session = await auth();
   const response = await fetch(
-    `${process.env.API_URL}/api/explorePosts?query=${searchValue}&take=${limit}&skip=${page}`,
-    {
-      method: "GET",
-    }
+    `${process.env.API_URL}/api/post/explore?query=${searchValue}&userId=${session?.userId}&take=${limit}&skip=${page}`
   );
   const data = await response.json();
   return data;
 }
 
-export async function getPosts({
-  page,
-  limit,
-}: PaginationProps): Promise<{ posts: Post[]; postsCount: number }> {
-  const user = await auth();
-  const response = await fetch(
-    `${process.env.API_URL}/api/post/all?userId=${user?.userId}&take=${limit}&skip=${page}`
-  );
-  const posts = await response.json();
-  return posts;
-}
 export async function deletePost(
   postId: string
 ): Promise<NextResponse & { postsLength: number }> {
@@ -191,21 +178,8 @@ export async function deletePost(
   const data = await response.json();
   return data;
 }
-export async function getUserSavedPosts({ page, limit }: PaginationProps) {
-  const session = await auth();
-  const response = await fetch(
-    `${process.env.API_URL}/api/post/savedPosts?userId=${session?.userId}&take=${limit}&skip=${page}`,
-    {
-      next: {
-        tags: ["saved"],
-        revalidate: new Date().getSeconds(),
-      },
-    }
-  );
-  const savedPosts = await response.json();
-  return savedPosts;
-}
-export async function toggleSavePost(postId: string): Promise<NextResponse> {
+
+export async function toggleSavePost(postId: string): Promise<any> {
   const session = await auth();
   const response = await fetch(`${process.env.API_URL}/api/post/save`, {
     method: "POST",
@@ -215,11 +189,9 @@ export async function toggleSavePost(postId: string): Promise<NextResponse> {
     body: JSON.stringify({ userId: session?.userId, postId }),
   });
   const data = await response?.json();
-  revalidatePath("/saved");
-
   return data;
 }
-export async function toggleLikePost(postId: string): Promise<NextResponse> {
+export async function likePostHandler(postId: string): Promise<NextResponse> {
   const session = await auth();
   const response = await fetch(`${process.env.API_URL}/api/post/like`, {
     method: "POST",
@@ -231,16 +203,13 @@ export async function toggleLikePost(postId: string): Promise<NextResponse> {
   const data = await response?.json();
   return data;
 }
+
 export async function getSinglePost(
   postId: string
 ): Promise<{ post: Post; relatedPosts: Post[] }> {
   const session = await auth();
   const response = await fetch(
-    `${process.env.API_URL}/api/post/${postId}?userId=${session?.userId}`,
-    {
-      method: "GET",
-      next: { tags: ["singlePost"] },
-    }
+    `${process.env.API_URL}/api/post/singlePostInfo/${postId}?userId=${session?.userId}`
   );
   const data = await response.json();
   if (data.status === 404) {
@@ -250,22 +219,59 @@ export async function getSinglePost(
   return data;
 }
 export async function createNewPost(values: FormData) {
+  //added the userId here
+  const session = await auth();
+  values.append("userId", session?.userId || "");
+
   const response = await fetch(`${process.env.API_URL}/api/post/create`, {
     method: "POST",
     body: values,
   });
 
   const data = await response.json();
-  if (data.status === 201) {
-    redirect("/");
-  }
   return data;
 }
 
 export async function getTopTrandsPosts({ limit, page }: PaginationProps) {
+  const session = await auth();
   const response = await fetch(
-    `${process.env.API_URL}/api/post/topTrends?&take=${limit}&skip=${page}`
+    `${process.env.API_URL}/api/post/topTrends?userId=${session?.userId}&take=${limit}&skip=${page}`
   );
   const data = await response.json();
   return data;
+}
+// remmebr change this name
+export async function getAllPosts({
+  page,
+  limit,
+}: PaginationProps): Promise<PostsResult> {
+  const user = await auth();
+  const response = await fetch(`
+    ${process.env.API_URL}/api/post/all?userId=${user?.userId}&limit=${limit}&page=${page}`);
+  const posts = await response.json();
+  return posts;
+}
+export async function getUserSavedPosts({
+  page,
+  limit,
+}: PaginationProps): Promise<PostsResult> {
+  const session = await auth();
+  const response = await fetch(
+    `${process.env.API_URL}/api/post/savedPosts?userId=${session?.userId}&limit=${limit}&page=${page}`
+  );
+  const savedPosts = await response.json();
+  return savedPosts;
+}
+
+export async function getRelatedPosts({
+  page,
+  limit,
+  postId,
+}: PaginationProps & { postId?: string }): Promise<PostsResult> {
+  const session = await auth();
+  const response = await fetch(
+    `${process.env.API_URL}/api/post/relatedPosts?userId=${session?.userId}&postId=${postId}&limit=${limit}&page=${page}`
+  );
+  const relatedPosts = await response.json();
+  return relatedPosts;
 }

@@ -20,6 +20,15 @@ export async function GET(
         },
       },
       include: {
+        _count: {
+          select: {
+            posts: true,
+            followers: true,
+            following: true,
+          },
+        },
+        // following: true,
+
         followers: {
           where: {
             followerId: userId,
@@ -27,11 +36,15 @@ export async function GET(
         },
       },
     });
-    const usersWithFollowStatus = users.map((user: any) => ({
-      ...user,
-      isFollowing: user.followers.length > 0,
-    }));
-
+    const usersWithFollowStatus = users.map((user: any) => {
+      const followingCheck = {
+        ...user,
+        isFollowing: user.followers.length > 0,
+        isCurrentUserProfile: false,
+      };
+      const { followers, ...newValues } = followingCheck;
+      return newValues;
+    });
     return NextResponse.json(
       {
         data: usersWithFollowStatus,

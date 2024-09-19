@@ -8,6 +8,9 @@ import UploadPicture from "./UploadPicture";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { postSchema } from "../_lib/validationSchema";
 import { createNewPost } from "../_lib/actions";
+import { useSWRConfig } from "swr";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 type FormProps = {
@@ -18,6 +21,7 @@ type FormProps = {
   picture: File;
 };
 export default function CreatePostForm() {
+  const { mutate, cache } = useSWRConfig();
   const methods = useForm<FormProps>({
     resolver: zodResolver(postSchema),
   });
@@ -25,21 +29,38 @@ export default function CreatePostForm() {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-  const getData: SubmitHandler<FormProps> = async (data) => {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const submitForm: SubmitHandler<FormProps> = async (data) => {
     const formData: FormData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value);
     });
-
-    await createNewPost(formData);
+    const response = await createNewPost(formData);
+    if (!response.ok) {
+      toast.error(response.message, {
+        closeOnClick: true,
+        theme: "colored",
+        type: "error",
+      });
+    } else {
+      mutate(
+        (key: string) => [
+          key?.includes("/api/post/all"),
+          key?.includes(
+            `/api/post/${session?.username}/createdPosts?userPosts`
+          ),
+        ],
+        null,
+        { revalidate: true }
+      );
+      router.push("/");
+    }
   };
-  const { data } = useSession();
   return (
     <FormProvider {...methods}>
-      <form className="space-y-6" onSubmit={handleSubmit(getData)}>
-        <Input name="userId" type="hidden" defaultValue={data?.userId} />
-
+      <form className="space-y-6" onSubmit={handleSubmit(submitForm)}>
         <Textarea
           name="caption"
           label={"caption"}

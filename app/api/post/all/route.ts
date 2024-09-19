@@ -2,18 +2,18 @@ import prisma from "@/app/_lib/db";
 import { Post } from "@/app/_types";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request):Promise<NextResponse> {
+export async function GET(req: Request): Promise<NextResponse> {
   const url = new URL(req.url);
   const userId: string = url.searchParams.get("userId") as string;
 
-  const skip: number = Number(url.searchParams.get("skip")) || 1;
-  const take: number = Number(url.searchParams.get("take")) || 3;
+  const page: number = Number(url.searchParams.get("page")) || 1;
+  const limit: number = Number(url.searchParams.get("limit")) || 3;
 
   try {
     const postsCount = await prisma.post.count();
     const posts = await prisma.post.findMany({
-      skip: (skip - 1) * take,
-      take: take,
+      skip: (page - 1) * limit,
+      take: limit,
       orderBy: {
         createdAt: "desc",
       },
@@ -37,7 +37,7 @@ export async function GET(req: Request):Promise<NextResponse> {
         },
       },
     });
-    const isLikedAndSavedByUser:Post[] = posts.map((post) => {
+    const isLikedAndSavedByUser: Post[] = posts.map((post) => {
       return {
         ...post,
         isLiked: post.likes.length > 0,

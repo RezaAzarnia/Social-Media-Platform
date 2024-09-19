@@ -19,12 +19,15 @@ export async function GET(req: Request, { params: { username } }: Props) {
         _count: {
           select: {
             posts: true,
+            followers: true,
+            following: true,
           },
         },
-        followers: true,
-        following: true,
+        // followers: true,
+        // following: true,
       },
     });
+
     if (!userProfile) {
       return NextResponse.json(
         {
@@ -36,6 +39,7 @@ export async function GET(req: Request, { params: { username } }: Props) {
         }
       );
     }
+
     const isFollowing = await prisma.follower.findUnique({
       where: {
         followerId_followingId: {
@@ -44,9 +48,11 @@ export async function GET(req: Request, { params: { username } }: Props) {
         },
       },
     });
+    
     const userDeatil = {
       ...userProfile,
       isFollowing: !!isFollowing,
+      isCurrentUserProfile: userProfile?.id === userId,
     };
     return NextResponse.json(
       {

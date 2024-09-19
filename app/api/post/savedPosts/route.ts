@@ -2,11 +2,11 @@ import prisma from "@/app/_lib/db";
 import { Post } from "@/app/_types";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request):Promise<NextResponse> {
+export async function GET(req: Request): Promise<NextResponse> {
   const url = new URL(req.url);
   const userId: string = url.searchParams.get("userId") as string;
-  const skip: number = Number(url.searchParams.get("skip")) || 0;
-  const take: number = Number(url.searchParams.get("take")) || 5;
+  const skip: number = Number(url.searchParams.get("page")) || 1;
+  const take: number = Number(url.searchParams.get("limit")) || 6;
 
   try {
     const savedPosts = await prisma.save.findMany({
@@ -63,7 +63,7 @@ export async function GET(req: Request):Promise<NextResponse> {
       return newItem;
     });
 
-    const response =  NextResponse.json(
+    const response = NextResponse.json(
       {
         status: 200,
         posts,
@@ -73,7 +73,7 @@ export async function GET(req: Request):Promise<NextResponse> {
         status: 200,
       }
     );
-return response
+    return response;
   } catch (error) {
     return NextResponse.json(
       {

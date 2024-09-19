@@ -1,4 +1,4 @@
-import {  z } from "zod";
+import { z } from "zod";
 
 export const registerSchema = z.object({
   name: z
@@ -73,7 +73,10 @@ const tagValidation = /\b\w+\b(?=\s\w+)/;
 export const postSchema = z.object({
   picture: z
     .any()
-    .refine((file) => file !== undefined, "please choose a picture for your post!")
+    .refine(
+      (file) => file !== undefined,
+      "please choose a picture for your post!"
+    )
     .refine((files) => files?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.type),
@@ -84,7 +87,12 @@ export const postSchema = z.object({
     .trim()
     .min(5, "at least five character")
     .max(60, "maxmim is 60 character"),
-  location: z.string().trim().optional().or(z.literal("")),
+  location: z
+    .string()
+    .trim()
+    .nonempty("Please enter your location")
+    .min(2, "Location must be at least 2 characters long")
+    .max(15, "Location must not exceed 15 characters"),
   hashtags: z
     .string()
     .trim()
@@ -94,5 +102,4 @@ export const postSchema = z.object({
     )
     .optional()
     .or(z.literal("")),
-  userId: z.string().trim(),
 });

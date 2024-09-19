@@ -1,20 +1,19 @@
 "use client";
-import React, { useState, useTransition } from "react";
+import React, { useTransition } from "react";
 import DeleteIcon from "../_Icons/DeleteIcon";
-import Dots from "../_Icons/Dots";
 import Edit from "../_Icons/Edit";
 import { toast } from "react-toastify";
 import SpinnerMini from "./SpinnerMini";
 import { deletePost } from "../_lib/actions";
 import { useRouter } from "next/navigation";
+import { useSWRConfig } from "swr";
 
 type Props = {
   postId: string;
 };
 export default function CardMenu({ postId }: Props) {
-  const [isShowMenu, setIsShowMenu] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
-
+  const { mutate } = useSWRConfig();
   const router = useRouter();
 
   const showWarningMessage = (): void => {
@@ -29,6 +28,14 @@ export default function CardMenu({ postId }: Props) {
     startTransition(async () => {
       //delete the post
       const response = await deletePost(postId);
+      //mutate the main page and explore and all the items have post in key
+      mutate(
+        (key: string[]) => key[0]?.startsWith("/api/post"),
+        (data: any) => console.log(data),
+        {
+          revalidate: true,
+        }
+      );
       if (response.status === 200) {
         router.push("/");
       }
@@ -36,32 +43,18 @@ export default function CardMenu({ postId }: Props) {
   };
   return (
     <div className="relative">
-      <button onClick={() => setIsShowMenu((prev) => !prev)}>
-        <Dots />
-      </button>
-      {isShowMenu && (
-        <ul
-          className={`absolute w-40 right-0 top-5 z-50 rounded-sm bg-white
-        ${isShowMenu && "active-menu"}
-        `}
-        >
-          <li className="menu-item">
-            <button className="border-b hover:bg-red " onClick={deleteUserPost}>
-              <span>{isPending ? <SpinnerMini /> : <DeleteIcon />}</span>
-              delete
-            </button>
-          </li>
-          <li className="menu-item ">
-            <button
-              className="gap-1 hover:bg-primary-600"
-              onClick={showWarningMessage}
-            >
-              <Edit />
-              edit
-            </button>
-          </li>
-        </ul>
-      )}
+      <ul className="flex items-center gap-3 no-underline">
+        <li>
+          <button onClick={deleteUserPost}>
+            <span>{isPending ? <SpinnerMini /> : <DeleteIcon />}</span>
+          </button>
+        </li>
+        <li>
+          <button onClick={showWarningMessage}>
+            <Edit />
+          </button>
+        </li>
+      </ul>
     </div>
   );
 }

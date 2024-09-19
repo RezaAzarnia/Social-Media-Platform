@@ -5,6 +5,7 @@ import Avatar from "./Avatar";
 type Props = {
   user: AuthenticatedUser;
 };
+
 function UserCard({ user }: Props) {
   return (
     <div className="flex flex-col items-center w-full h-full row-span-1 gap-3 py-5 border-2 min-w-44 rounded-xl border-dark-4">

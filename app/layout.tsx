@@ -5,6 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import Layout from "./_Components/Layout";
 import "@/app/_styles/globals.css";
 import "react-toastify/dist/ReactToastify.css";
+import SWRProvider from "./_Components/SWRProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +24,9 @@ export default async function RootLayout({
       <body className={inter.className}>
         <ToastContainer />
         <SessionProvider>
+          <SWRProvider>
             <Layout>{children}</Layout>
+          </SWRProvider>
         </SessionProvider>
       </body>
     </html>

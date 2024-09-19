@@ -1,7 +1,8 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { Post } from "../_types";
+import useSWRInfinite from "swr/infinite";
 
 type FecthParams = {
   page: number;
@@ -11,52 +12,41 @@ type FecthParams = {
 };
 
 type Props = {
-  initialValues: { posts: Post[]; postsCount: number };
-
+  fetchKey: string;
   fetchFunction: (
     params: FecthParams
   ) => Promise<{ posts: Post[]; postsCount: number }>;
   params?: { searchValue?: string; username?: string };
-  itemsCount?: number;
+  limit?: number;
 };
 
 export default function useInfinitScroll({
-  initialValues,
+  fetchKey,
   fetchFunction,
   params,
-  itemsCount,
+  limit = 6,
 }: Props) {
   const { ref, inView } = useInView();
-  const [page, setPage] = useState<number>(1);
-  const [posts, setPosts] = useState<Post[]>(initialValues?.posts);
-  const postsCount: number = initialValues?.postsCount;
-  const [isLoading, setIsLoading] = useState(true);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [postsCount, setPostCount] = useState<number>(0);
+
+  const { data, size, setSize, isLoading } = useSWRInfinite(
+    (index) => [fetchKey, index + 1, limit],
+    async ([_, page, limit]) => await fetchFunction({ ...params, page, limit })
+  );
 
   useEffect(() => {
-    if (posts) {
-      setIsLoading(false);
+    if (data) {
+      const newPosts = data.flatMap((item) => item?.posts || []); // Combine all posts from the data array
+      setPosts(newPosts);
+      setPostCount(data?.[0]?.postsCount);
     }
-  }, [posts]);
-
-  const getNewPosts= useCallback(async () => {
-    const nextPage = page + 1;
-    const param = {
-      ...params,
-      page: nextPage,
-      limit: itemsCount ?? 6,
-    };
-
-    const newPosts = await fetchFunction(param);
-
-    if (newPosts) {
-      setPosts([...posts, ...newPosts.posts]);
-      setPage(nextPage);
-    }
-  }, [inView]);
+  }, [data]);
 
   useEffect(() => {
-    if (inView) {
-      getNewPosts();
+    if (inView && !(posts?.length >= postsCount)) {
+      const newSizeValie = size + 1;
+      setSize(() => newSizeValie);
     }
   }, [inView]);
 

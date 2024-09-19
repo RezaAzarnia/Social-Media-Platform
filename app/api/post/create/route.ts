@@ -13,7 +13,6 @@ export async function POST(req: Request) {
   const data = await req.formData();
   const body = Object.fromEntries(data);
   const postValidation = postSchema.safeParse(body);
-
   if (!postValidation.success) {
     return NextResponse.json({
       message: postValidation?.error?.flatten().fieldErrors,
@@ -21,42 +20,40 @@ export async function POST(req: Request) {
   }
 
   const file = body.picture as File;
-  const pathDir = "./public/uploads/";
-  const fileName = randomUUID() + file.name;
+  const fileName = Date.now() + file.name;
 
   try {
-    const filePath = `${pathDir}${fileName}`;
+    const filePath = `./public/uploads/${fileName}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    console.log(buffer);
     const stream = Readable.from(buffer);
-    console.log(stream);
     await pump(stream, fs.createWriteStream(filePath));
 
-    await prisma.post.create({
+    const response = await prisma.post.create({
       data: {
         caption: body.caption as string,
-        imageUrl: `/uploads/${fileName}`,
+        imageUrl: `uploads/${fileName}`,
         creatorId: body.userId as string,
         location: body.location as string,
         hashtags: body.hashtags as string,
       },
     });
-
     return NextResponse.json(
       {
         status: 201,
+        ok: true,
         message: "Post created successfully",
       },
       {
         status: 201,
       }
     );
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
       {
         status: 500,
-        message: "Internal server Error",
+        message: error.message || "Internal server Error",
+        ok: false,
       },
       {
         status: 500,

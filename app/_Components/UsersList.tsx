@@ -1,17 +1,22 @@
-import React, { memo, Suspense } from "react";
+"use client";
+import React, { memo } from "react";
 import UserCard from "./UserCard";
+import { ProfileType } from "../_types";
+import useSWR from "swr";
+import { getUsers } from "../_lib/actions";
 import Spinner from "./Spinner";
-import { AuthenticatedUser } from "../_types";
-type Props = {
-  users: AuthenticatedUser[];
-};
-async function UsersList({ users }: Props) {
+
+function UsersList() {
+  const { data: users, isLoading } = useSWR("/api/users", getUsers, {
+    refreshWhenHidden: true,
+  });
+  if (isLoading) return <Spinner />;
   return (
-    <Suspense fallback={<Spinner />}>
-      {users?.map((user) => {
+    <>
+      {users?.data.map((user: ProfileType) => {
         return <UserCard user={user} key={user.id} />;
       })}
-    </Suspense>
+    </>
   );
 }
 export default memo(UsersList);

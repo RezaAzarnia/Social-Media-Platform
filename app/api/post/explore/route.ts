@@ -1,11 +1,13 @@
 import prisma from "@/app/_lib/db";
+import { Post } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request): Promise<NextResponse> {
-  const url = new URL(req.url);
-  const searchValue: string | null = url.searchParams.get("query");
-  const skip: number = Number(url.searchParams.get("skip")) || 1;
-  const take: number = Number(url.searchParams.get("take")) || 6;
+  const searchParams = new URL(req.url).searchParams;
+  const searchValue: string | null = searchParams.get("query");
+  const userId = searchParams.get("userId") as string;
+  const skip: number = Number(searchParams.get("skip")) || 1;
+  const take: number = Number(searchParams.get("take")) || 6;
   try {
     if (searchValue) {
       const posts = await prisma.post.findMany({
@@ -37,6 +39,17 @@ export async function GET(req: Request): Promise<NextResponse> {
               name: true,
             },
           },
+          likes: {
+            where: { userId },
+          },
+          savedBy: {
+            where: { userId },
+          },
+          _count: {
+            select: {
+              likes: true,
+            },
+          },
         },
       });
 
@@ -61,9 +74,16 @@ export async function GET(req: Request): Promise<NextResponse> {
           ],
         },
       });
+      const isLikedAndSavedByUser: Post[] = posts.map((post) => {
+        return {
+          ...post,
+          isLiked: post.likes.length > 0,
+          isSaved: post.savedBy.length > 0,
+        };
+      });
       return NextResponse.json({
         postsCount,
-        posts,
+        posts: isLikedAndSavedByUser,
         status: 200,
       });
     }

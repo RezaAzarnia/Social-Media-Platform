@@ -4,59 +4,56 @@ import PostPreviewCard from "./PostPreviewCard";
 import useInfinitScroll from "@/app/_Components/useInfinitScroll";
 import SpinnerMini from "./SpinnerMini";
 import { Post } from "../_types";
-import Spinner from "./Spinner";
-type FecthParams = {
-  page: number;
-  limit: number;
-  searchValue?: string;
-  username?: string;
-};
+import PostPreviewskeleton from "./PostPreviewskeleton";
+
 type Props = {
-  initialValues: { posts: Post[]; postsCount: number };
-  fetchFunction: (
-    params: FecthParams
-  ) => Promise<{ posts: Post[]; postsCount: number }>;
+  fetchKey: string;
+  
+  fetchFunction: ({
+    limit,
+    page,
+  }: {
+    page: number;
+    limit: number;
+  }) => Promise<{ posts: Post[]; postsCount: number }>;
 
   isShowLike?: boolean;
-  render?: React.ReactNode;
-  params?: { searchValue?: string; username?: string };
-  itemsCount?: number;
+  params?: { postId?: string; searchValue?: string; username?: string };
+  limit?: number;
 };
 
 function PostsList({
-  initialValues,
   fetchFunction,
-  isShowLike,
+  fetchKey,
+  limit,
   params,
-  itemsCount,
-  render,
+  isShowLike,
 }: Props) {
   const { ref, postsLength, posts, isLoading } = useInfinitScroll({
-    initialValues,
     fetchFunction,
+    fetchKey,
     params,
-    itemsCount,
+    limit,
   });
-console.log(postsLength);
+
+  if (isLoading) {
+    return <PostPreviewskeleton />;
+  }
   return (
     <>
       <div className="flex flex-wrap gap-6">
-        {isLoading ? (
-          <Spinner />
-        ) : posts.length > 0 ? (
-          posts.map((post: Post) => {
+        {posts.length > 0 &&
+          posts?.map((post) => {
             return (
               <PostPreviewCard
                 post={post}
-                isShowLike={isShowLike ? true : false}
                 key={post.id}
+                isShowLike={isShowLike}
               />
             );
-          })
-        ) : (
-          render
-        )}
-        {!isLoading && !(posts?.length >= postsLength) && (
+          })}
+
+        {!isLoading && posts?.length !== postsLength && (
           <SpinnerMini ref={ref} />
         )}
       </div>
