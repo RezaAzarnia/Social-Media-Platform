@@ -1,13 +1,10 @@
 import prisma from "@/app/_lib/db";
 import { postSchema } from "@/app/_lib/validationSchema";
 import { NextResponse } from "next/server";
-import { pipeline } from "stream";
-import { promisify } from "util";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { client } from "@/app/utils/utils";
+import sharp from "sharp";
 import { randomUUID } from "crypto";
-import fs from "fs";
-import { Readable } from "stream"; // استفاده از stream از خود Node.js
-
-const pump = promisify(pipeline);
 
 export async function POST(req: Request) {
   const data = await req.formData();
@@ -20,19 +17,30 @@ export async function POST(req: Request) {
   }
 
   const file = body.picture as File;
-  const fileName = Date.now() + file.name;
-
+  const fileName = `${Date.now()}-${randomUUID()}-${file.name}`;
   try {
-    const filePath = `./public/uploads/${fileName}`;
-
     const buffer = Buffer.from(await file.arrayBuffer());
-    const stream = Readable.from(buffer);
-    await pump(stream, fs.createWriteStream(filePath));
+    //optmize picture size
+    const optimizedImageBuffer = await sharp(buffer)
+      .resize({ width: 1200 })
+      .toFormat("webp", { quality: 80 })
+      .rotate()
+      .toBuffer();
 
-    const response = await prisma.post.create({
+    const uploadParams = {
+      Bucket: process.env.LIARA_BUCKET_NAME,
+      Key: `/uploads/${fileName}`,
+      Body: optimizedImageBuffer,
+      ContentType: file.type,
+    };
+
+    // آپلود فایل به S3
+    await client.send(new PutObjectCommand(uploadParams));
+
+    await prisma.post.create({
       data: {
         caption: body.caption as string,
-        imageUrl: `uploads/${fileName}`,
+        imageUrl: `uploads/${fileName}`, // URL نسبی فایل در S3
         creatorId: body.userId as string,
         location: body.location as string,
         hashtags: body.hashtags as string,

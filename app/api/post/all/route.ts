@@ -37,7 +37,7 @@ export async function GET(req: Request): Promise<NextResponse> {
         },
       },
     });
-    const isLikedAndSavedByUser: Post[] = posts.map((post) => {
+    const isLikedAndSavedByUser: Post[] = posts.map((post: any) => {
       return {
         ...post,
         isLiked: post.likes.length > 0,

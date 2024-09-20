@@ -15,7 +15,7 @@ export default function PostPreviewCard({ post, isShowLike = true }: Props) {
         <Image
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-          src={"http://localhost:3000/" + post.imageUrl}
+          src={process.env.NEXT_PUBLIC_PICTURE_URL + post.imageUrl}
           alt={post.caption}
           className="rounded-2xl h-80"
           priority={true}
