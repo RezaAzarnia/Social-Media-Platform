@@ -1,8 +1,11 @@
 import prisma from "@/app/_lib/db";
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { client } from "@/app/utils/utils";
 
+const params = {
+  Bucket: process.env.LIARA_BUCKET_NAME,
+};
 export async function DELETE(req: Request) {
   const { postId } = await req.json();
 
@@ -25,20 +28,15 @@ export async function DELETE(req: Request) {
         }
       );
     }
-
-    // مسیر عکس از پست دریافت شده
-    const imagePath = path.join(process.cwd(), "public", post.imageUrl);
-    // حذف عکس از پوشه public/uploads
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-    }
-
     // حذف پست از دیتابیس
     await prisma.post.delete({
       where: {
         id: postId,
       },
     });
+    await client.send(
+      new DeleteObjectCommand({ ...params, Key: post?.imageUrl as string })
+    );
 
     const postsLength = await prisma.post.count();
 

@@ -1,5 +1,5 @@
 import prisma from "@/app/_lib/db";
-import { Post } from "@prisma/client";
+import { Post } from "@/app/_types";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request): Promise<NextResponse> {

@@ -9,7 +9,6 @@ type Props = {
   post: Post;
 };
 export default function PostCard({ post }: Props) {
-  console.log(post.imageUrl);
   return (
     <div className="flex flex-col max-w-5xl gap-3 p-6 mx-auto my-6 border bg-dark-2 rounded-3xl border-dark-4 ">
       <div className="flex items-center justify-between">
@@ -22,10 +21,10 @@ export default function PostCard({ post }: Props) {
       <Link href={`/post/${post.id}`}>
         <div className="relative h-[450px] max-h-[400px] w-full">
           <Image
+            src={process.env.NEXT_PUBLIC_PICTURE_URL + post.imageUrl}
             className="h-full mb-2 rounded-3xl"
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             fill
-            src={"http://localhost:3000/" + post.imageUrl}
             alt={post.caption}
             priority={true}
           />

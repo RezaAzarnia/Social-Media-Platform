@@ -54,7 +54,7 @@ export default function SinglePostInfo({ postId }: Props) {
         <div className="w-full  h-[400px] border border-dark-4 rounded-md flex gap-3 mt-10">
           <div className="relative w-1/2">
             <Image
-              src={`http://localhost:3000/${postInfo?.imageUrl}`}
+              src={process.env.NEXT_PUBLIC_PICTURE_URL + postInfo.imageUrl}
               alt={postInfo?.caption ?? "this is a post from snappgramm"}
               fill
               priority
