@@ -3,6 +3,14 @@ import Logo from "../_Icons/Logo";
 import Image from "next/image";
 import loginPicture from "@/public/side-img.png";
 import RegisterForm from "../_Components/RegisterForm";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "SnappGram | Create New Account",
+  description:
+    "Join SnappGram by creating a new account. Sign up to connect with friends, share moments, and explore a vibrant social media community.",
+  robots: { index: true, follow: true },
+};
 
 export default function page() {
   return (

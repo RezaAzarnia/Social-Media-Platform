@@ -26,7 +26,6 @@
   disabled:cursor-not-allowed disabled:bg-dark-3 disabled:text-light-3;
 }
 
-
 @layer utilities {
   input:-webkit-autofill {
     background-color: #1f2937; /* Replace with your dark color */
@@ -45,6 +44,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
 }
 .spinner-mini {
   width: 15px;

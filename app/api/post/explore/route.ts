@@ -1,5 +1,5 @@
 import prisma from "@/app/_lib/db";
-import { Post } from "@/app/_types";
+import { HttpResposne, Post } from "@/app/_types";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request): Promise<NextResponse> {
@@ -10,7 +10,7 @@ export async function GET(req: Request): Promise<NextResponse> {
   const take: number = Number(searchParams.get("take")) || 6;
   try {
     if (searchValue) {
-      const posts = await prisma.post.findMany({
+      const posts:Post[] = await prisma.post.findMany({
         skip: (skip - 1) * take,
         take: take,
         where: {
@@ -51,7 +51,7 @@ export async function GET(req: Request): Promise<NextResponse> {
             },
           },
         },
-      });
+      }) as Post[]
 
       const postsCount = await prisma.post.count({
         where: {
@@ -74,7 +74,7 @@ export async function GET(req: Request): Promise<NextResponse> {
           ],
         },
       });
-      const isLikedAndSavedByUser: Post[] = posts.map((post) => {
+      const isLikedAndSavedByUser: Post[] = posts.map((post:Post) => {
         return {
           ...post,
           isLiked: post.likes.length > 0,
@@ -82,8 +82,8 @@ export async function GET(req: Request): Promise<NextResponse> {
         };
       });
       return NextResponse.json({
-        postsCount,
         posts: isLikedAndSavedByUser,
+        postsCount,
         status: 200,
       });
     }
@@ -93,7 +93,7 @@ export async function GET(req: Request): Promise<NextResponse> {
       status: 403,
     });
   } catch (error) {
-    return NextResponse.json(
+    return NextResponse.json<HttpResposne>(
       {
         status: 500,
         message: "Internal server error",

@@ -1,5 +1,5 @@
 import prisma from "@/app/_lib/db";
-import { LikeResponse } from "@/app/_types";
+import { HttpResposne, LikeResponse } from "@/app/_types";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request): Promise<NextResponse> {
@@ -23,7 +23,7 @@ export async function POST(req: Request): Promise<NextResponse> {
           },
         },
       });
-      return NextResponse.json(
+      return NextResponse.json<HttpResposne>(
         {
           status: 200,
           message: "post disliked successfully",
@@ -38,7 +38,7 @@ export async function POST(req: Request): Promise<NextResponse> {
           postId,
         },
       });
-      return NextResponse.json(
+      return NextResponse.json<HttpResposne>(
         {
           status: 201,
           message: "liked the post",
@@ -49,7 +49,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       );
     }
   } catch (error) {
-    return NextResponse.json(
+    return NextResponse.json<HttpResposne>(
       {
         status: 500,
         message: "Internal server error",

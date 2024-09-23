@@ -7,11 +7,11 @@ export async function GET(req: Request): Promise<NextResponse> {
   const userId: string = url.searchParams.get("userId") as string;
 
   const page: number = Number(url.searchParams.get("page")) || 1;
-  const limit: number = Number(url.searchParams.get("limit")) || 3;
+  const limit: number = Number(url.searchParams.get("limit")) || 6;
 
   try {
     const postsCount = await prisma.post.count();
-    const posts = await prisma.post.findMany({
+    const posts: Post[] = (await prisma.post.findMany({
       skip: (page - 1) * limit,
       take: limit,
       orderBy: {
@@ -36,12 +36,12 @@ export async function GET(req: Request): Promise<NextResponse> {
           },
         },
       },
-    });
-    const isLikedAndSavedByUser: Post[] = posts.map((post: any) => {
+    })) as Post[];
+    const isLikedAndSavedByUser: Post[] = posts.map((post:Post) => {
       return {
         ...post,
-        isLiked: post.likes.length > 0,
-        isSaved: post.savedBy.length > 0,
+        isLiked: post?.likes.length > 0,
+        isSaved: post?.savedBy.length > 0,
       };
     });
     return NextResponse.json(

@@ -59,16 +59,18 @@ export async function POST(req: Request): Promise<NextResponse> {
       {
         status: 201,
         message: "user created successfully",
+        ok:true
       },
       {
         status: 201,
       }
     );
-  } catch (error) {
+  } catch (error:any) {
     return NextResponse.json<HttpResposne>(
       {
         status: 500,
-        message: "Internal Server Error",
+        message: error.message || "Internal Server Error",
+        ok:false
       },
       {
         status: 500,

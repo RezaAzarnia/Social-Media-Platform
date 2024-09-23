@@ -1,7 +1,30 @@
 import prisma from "@/app/_lib/db";
 import { Post } from "@/app/_types";
 import { NextResponse } from "next/server";
-
+interface SavedPostItem {
+  id: string;
+  userId: string;
+  postId: string;
+  createdAt: Date;
+  post: {
+    id: string;
+    caption: string;
+    imageUrl: string;
+    creatorId: string;
+    createdAt: Date;
+    location: string;
+    hashtags: string;
+    creator: {
+      username: string;
+      name: string;
+    };
+    _count: {
+      likes: number;
+    };
+    likes: Array<Record<string, any>>; // یا تایپ دقیق‌تر برای `like`
+    savedBy: Array<Record<string, any>>; // یا تایپ دقیق‌تر برای `save`
+  };
+}
 export async function GET(req: Request): Promise<NextResponse> {
   const url = new URL(req.url);
   const userId: string = url.searchParams.get("userId") as string;
@@ -9,7 +32,7 @@ export async function GET(req: Request): Promise<NextResponse> {
   const take: number = Number(url.searchParams.get("limit")) || 6;
 
   try {
-    const savedPosts = await prisma.save.findMany({
+    const savedPosts: SavedPostItem[] = await prisma.save.findMany({
       skip: (skip - 1) * take,
       take: take,
       where: {
@@ -52,16 +75,15 @@ export async function GET(req: Request): Promise<NextResponse> {
       },
     });
 
-    const posts: Post[] = savedPosts.map((item) => {
+    const posts: Post[] = savedPosts.map((item: SavedPostItem) => {
       const { post } = item;
-      const newValues = {
+      return {
         ...post,
         isLiked: post.likes.length > 0,
         isSaved: post.savedBy.length > 0,
       };
-      const { likes, savedBy, ...newItem } = newValues;
-      return newItem;
     });
+    //  console.log(posts);
 
     const response = NextResponse.json(
       {

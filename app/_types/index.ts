@@ -22,12 +22,14 @@ export type AuthenticatedUser = {
 export type HttpResposne = {
   status: number;
   message: string;
+  ok?: boolean;
 };
 
 export type Post = {
   id: string;
   caption: string;
   imageUrl: string;
+  creatorId: string;
   createdAt: Date;
   location: string;
   hashtags: string;
@@ -35,7 +37,8 @@ export type Post = {
   _count: { likes: number };
   isLiked: boolean;
   isSaved: boolean;
-  creatorId: string;
+  likes: Array<Record<string, any>> | []; // یا تایپ دقیق‌تر برای `like`
+  savedBy: Array<Record<string, any>> | []; // یا تایپ دقیق‌تر برای `save`
 };
 
 export type LikeResponse = {

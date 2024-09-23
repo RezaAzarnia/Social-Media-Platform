@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 
@@ -22,7 +23,9 @@ export default function Avatar({
         <div
           className={`${isSmallAvatar ? "w-10 h-10" : "w-12 h-12"} 
           flex flex-col items-center justify-center 
-          rounded-full bg-blue-950`}
+          rounded-full  text-black font-semibold
+          bg-light-purple
+          `}
           style={{
             fontFamily: "Playwrite BE VLG",
           }}

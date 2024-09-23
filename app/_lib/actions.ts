@@ -64,7 +64,7 @@ export async function getMe(): Promise<AuthenticatedUser> {
 
 export async function getProfile(
   username: string
-): Promise<{ profile: ProfileType }> {
+): Promise<{ status: number; profile: ProfileType }> {
   const session = await auth();
   const response = await fetch(
     `${process.env.API_URL}/api/user/profile/${username}?userId=${session?.userId}`,
@@ -76,9 +76,6 @@ export async function getProfile(
     }
   );
   const data = await response.json();
-  if (data.status === 404) {
-    notFound();
-  }
   return data;
 }
 
@@ -138,15 +135,15 @@ export async function toggleFollow(followingId: string): Promise<NextResponse> {
 }
 
 export async function getUserActivity({
-  searchValue,
+  selectedActivity,
   username,
   page,
   limit,
-}: PaginationProps & { searchValue?: string; username?: string }) {
+}: PaginationProps & { selectedActivity?: string; username?: string }) {
   const session = await auth();
   const response = await fetch(
     `${process.env.API_URL}/api/user/profile/activity/${username}?
-     &requestQuery=${searchValue}&userId=${session?.userId}&take=${limit}&skip=${page}`
+     &requestQuery=${selectedActivity}&userId=${session?.userId}&take=${limit}&skip=${page}`
   );
   const data = await response.json();
   return data;

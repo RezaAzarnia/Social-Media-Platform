@@ -1,4 +1,5 @@
 import prisma from "@/app/_lib/db";
+import { HttpResposne } from "@/app/_types";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
           },
         },
       });
-      return NextResponse.json(
+      return NextResponse.json<HttpResposne>(
         {
           status: 200,
           message: "un saved post successfully",
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
           postId,
         },
       });
-      return NextResponse.json(
+      return NextResponse.json<HttpResposne>(
         {
           status: 201,
           message: "saved the post",
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
       );
     }
   } catch (error: any) {
-    return NextResponse.json(
+    return NextResponse.json<HttpResposne>(
       {
         status: 500,
         message: error?.message || "Internal Server Error",

@@ -1,12 +1,15 @@
 import React from "react";
-
-export default function Save() {
+type Props = {
+  width?: 20 | 25 | 40;
+  height?: 20 | 25 | 40;
+};
+export default function Save({ width = 20, height = 20 }: Props) {
   return (
     <svg
       className="icon"
       xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
+      width={width}
+      height={height}
       fill="none"
       viewBox="0 0 20 20"
     >

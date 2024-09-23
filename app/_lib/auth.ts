@@ -1,27 +1,22 @@
-import NextAuth from "next-auth";
+import NextAuth, { Session } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { LoginCredentials } from "@/app/_types";
-
 import { loginHandler } from "./actions";
+import { NextRequest, NextResponse } from "next/server";
 
 declare module "next-auth" {
   interface Session {
     userId: string;
     name: string;
     username: string;
-    // refreshToken: string;
-    // accessToken: string;
-    // expires: number; // Assuming this property represents token expiration time
-    // createdAt: Date;
   }
   interface JWT {
     email: string;
     username: string;
     refreshToken: string;
-    expires: number; // Assuming this property represents token expiration time
+    expires: number;
     accessToken: string;
-    createdAt: number; // Assuming this property represents token creation time
-    // Add other missing pr
+    createdAt: number;
   }
   interface User {
     accessToken: string;
@@ -36,11 +31,12 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
       authorize: async (credentials) => {
         try {
           const res = await loginHandler(credentials as LoginCredentials);
-          if (!res.ok) {
+          const response = await res.json();
+
+          if (!response.ok) {
             throw new Error("invalid crediationls");
           }
-          const response = await res.json();
-          return response;
+          return response.user;
         } catch (error) {
           if (error instanceof Error) {
             throw new Error("some thing went wrong");
@@ -71,6 +67,26 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
       }
       return token;
     },
-  },
+    authorized: ({
+      request,
+      auth,
+    }: {
+      request: NextRequest;
+      auth: Session | null;
+    }) => {
+      const protectedPathsRegex: RegExp = /^(?!\/(login|register)).*/;
+      const url = new URL(request.url);
 
+      if (auth && (url.pathname === "/login" || url.pathname === "/register")) {
+        const newUrl = new URL("/", request.nextUrl.origin);
+        return Response.redirect(newUrl);
+      }
+      if (!auth && protectedPathsRegex.test(url.pathname)) {
+        const newUrl = new URL("/login", request.nextUrl.origin);
+        return Response.redirect(newUrl);
+      }
+
+      return NextResponse.next();
+    },
+  },
 });

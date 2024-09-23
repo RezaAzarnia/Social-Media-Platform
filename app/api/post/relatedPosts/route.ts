@@ -1,6 +1,5 @@
 import prisma from "@/app/_lib/db";
-import { HttpResposne } from "@/app/_types";
-import { Post } from "@prisma/client";
+import { HttpResposne, Post } from "@/app/_types";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -17,7 +16,7 @@ export async function GET(req: Request) {
       },
     });
 
-    const relatedPosts = await prisma.post.findMany({
+    const relatedPosts:Post[] = await prisma.post.findMany({
       skip: (page - 1) * limit,
       take: limit,
       where: {
@@ -61,7 +60,7 @@ export async function GET(req: Request) {
           },
         },
       },
-    });
+    }) as Post[]
 
     const postsCount = await prisma.post.count({
       skip: (page - 1) * limit,
@@ -89,7 +88,7 @@ export async function GET(req: Request) {
         ],
       },
     });
-    const isLikedAndSavedByUser: Post[] = relatedPosts.map((post) => {
+    const isLikedAndSavedByUser: Post[] = relatedPosts.map((post:Post) => {
       return {
         ...post,
         isLiked: post.likes.length > 0,
@@ -110,7 +109,7 @@ export async function GET(req: Request) {
       {
         status: 500,
         message: error?.message || "internal server error",
-        // ok: false,
+        ok: false,
       },
       {
         status: 500,

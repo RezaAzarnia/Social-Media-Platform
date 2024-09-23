@@ -5,7 +5,7 @@ import FilterTabpane from "./FilterTabpane";
 import Edit from "../_Icons/Edit";
 import Link from "next/link";
 import { ProfileType } from "../_types";
-import useSWR, { useSWRConfig } from "swr";
+import useSWR, { mutate, useSWRConfig } from "swr";
 import { getProfile, getUsers } from "../_lib/actions";
 import ProfileSkeleton from "./ProfileSkeleton";
 
@@ -14,26 +14,29 @@ type Props = {
 };
 
 export default function UserProfile({ username }: Props) {
-  const { cache } = useSWRConfig();
+  const { cache, mutate } = useSWRConfig();
   const [profileInfo, setProfileInfo] = useState<ProfileType | null>(null);
+
   const { data: store } = useSWR("/api/users", getUsers, {
     fallbackData: cache.get("/api/users")?.data,
   });
-
+  //find the user from cache
   const cachedUser: ProfileType | undefined = useMemo(() => {
     return store?.data?.find((item: any) => item.username === username);
   }, [store, username]);
 
-
+  // request for user info if user doesn't exist in cache
   const { data, isLoading } = useSWR(
     !cachedUser ? `/api/users/${username}` : null,
-    () => getProfile(username),
-    {
-      fallbackData: cache?.get(`/api/users/${username}`)?.data,
-    }
+    async () => await getProfile(username)
   );
+
   useEffect(() => {
-    cachedUser ? setProfileInfo(cachedUser) : setProfileInfo(data?.profile);
+    if (cachedUser) {
+      setProfileInfo(cachedUser);
+      return;
+    }
+    data && setProfileInfo(data?.profile);
   }, [cachedUser, data]);
 
   if (isLoading) {
@@ -75,26 +78,6 @@ export default function UserProfile({ username }: Props) {
   );
 }
 
-const FollowerFollowingsList = ({
-  profileFollowers,
-}: {
-  profileFollowers: Record<string, number>;
-}) => {
-  return (
-    <ul className="flex items-center gap-3 mt-3 [&>li]:space-x-1">
-      {profileFollowers &&
-        Object?.entries(profileFollowers)?.flatMap((item) => {
-          return (
-            <li key={item?.[0]}>
-              <span className="text-primary-500">{item?.[1]}</span>
-              <span>{item?.[0]}</span>
-            </li>
-          );
-        })}
-    </ul>
-  );
-};
-
 const ProfileAvatar = ({
   userProfile,
   children,
@@ -105,19 +88,40 @@ const ProfileAvatar = ({
   return (
     <>
       <div
-        className="flex flex-col items-center justify-center text-4xl rounded-full bg-blue-950 w-28 h-28 "
+        className="flex flex-col items-center justify-center text-4xl text-black rounded-full w-28 h-28 bg-light-purple "
         style={{ fontFamily: "Playwrite BE VLG" }}
       >
-        {userProfile?.name.charAt(0).toUpperCase()}
+        {userProfile?.name?.charAt(0).toUpperCase()}
       </div>
       <div className="flex flex-col gap-2">
         <h4 className="text-3xl font-semibold"> {userProfile?.name} </h4>
         <span className="text-md text-light-3">@{userProfile?.username}</span>
-        <span className="italic text-md text-light-1">
-          {userProfile?.bio ? userProfile?.bio : ""}
-        </span>
+        {userProfile?.bio && (
+          <span className="italic text-md text-light-1">
+            {userProfile?.bio}
+          </span>
+        )}
         {children}
       </div>
     </>
+  );
+};
+const FollowerFollowingsList = ({
+  profileFollowers,
+}: {
+  profileFollowers: Record<string, number>;
+}) => {
+  return (
+    <ul className="flex items-center gap-3 [&>li]:space-x-1">
+      {profileFollowers &&
+        Object?.entries(profileFollowers)?.flatMap((item) => {
+          return (
+            <li key={item?.[0]}>
+              <span className="text-primary-500">{item?.[1]}</span>
+              <span>{item?.[0]}</span>
+            </li>
+          );
+        })}
+    </ul>
   );
 };

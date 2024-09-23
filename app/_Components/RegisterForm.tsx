@@ -27,18 +27,17 @@ export default function RegisterForm() {
   const handleRegister: SubmitHandler<NewUserDetails> = async (data) => {
     try {
       const registerResponse = await regsiterUser(data);
+      console.log(registerResponse.ok);
       if (registerResponse.status === 201) {
         router.push("/login");
         reset();
       }
-      if (registerResponse.status === 409) {
-        if (registerResponse instanceof Error) {
-          toast(registerResponse?.message, {
-            type: "error",
-            theme: "colored",
-            closeOnClick: true,
-          });
-        }
+      if (!registerResponse.ok && registerResponse instanceof Error) {
+        toast(registerResponse?.message, {
+          type: "error",
+          theme: "colored",
+          closeOnClick: true,
+        });
       }
     } catch (error: any) {
       toast(error?.message, {

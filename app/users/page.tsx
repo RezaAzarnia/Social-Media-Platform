@@ -1,12 +1,20 @@
 import React, { memo } from "react";
 import UsersList from "../_Components/UsersList";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "SnappGram | All Users",
+  description:
+    "Explore all users on SnappGram, the vibrant social media platform by Reza Azarnia. Connect with friends and discover new profiles to follow.",
+  robots: { index: true, follow: true },
+};
 
 async function page() {
   return (
-    <div className="col-span-2 py-12 px-16 max-w-6xl relative">
-      <h1 className="text-3xl capitalize font-bold mb-8">all users</h1>
+    <div className="relative max-w-6xl col-span-2 px-16 py-12">
+      <h1 className="mb-8 text-3xl font-bold capitalize">all users</h1>
       <div className="grid grid-cols-3 auto-rows-[210px] gap-5">
-        <UsersList  />
+        <UsersList />
       </div>
     </div>
   );

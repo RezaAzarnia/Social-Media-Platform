@@ -4,6 +4,30 @@ import { NextResponse } from "next/server";
 type Props = {
   params: { username: string };
 };
+interface LikedPosts {
+  id: string;
+  userId: string;
+  postId: string;
+  createdAt: Date;
+  post: {
+    id: string;
+    caption: string;
+    imageUrl: string;
+    creatorId: string;
+    createdAt: Date;
+    location: string;
+    hashtags: string;
+    creator: {
+      username: string;
+      name: string;
+    };
+    _count: {
+      likes: number;
+    };
+    likes: Array<Record<string, any>>; // یا تایپ دقیق‌تر برای `like`
+    savedBy: Array<Record<string, any>>; // یا تایپ دقیق‌تر برای `save`
+  };
+}
 export async function GET(req: Request, { params: { username } }: Props) {
   const searchParams = new URL(req.url).searchParams;
   const skip: number = Number(searchParams.get("skip")) || 0;
@@ -29,7 +53,7 @@ export async function GET(req: Request, { params: { username } }: Props) {
       const postsLength = await prisma.post.count({
         where: { creatorId: user?.id },
       });
-      const userCreatedPosts = await prisma.post.findMany({
+      const userCreatedPosts: Post[] = (await prisma.post.findMany({
         skip: (skip - 1) * take,
         take: take,
         where: {
@@ -57,15 +81,17 @@ export async function GET(req: Request, { params: { username } }: Props) {
             },
           },
         },
-      });
+      })) as Post[];
 
-      const isLikedAndSavedByUser: Post[] = userCreatedPosts.map((post) => {
-        return {
-          ...post,
-          isLiked: post.likes.length > 0,
-          isSaved: post.savedBy.length > 0,
-        };
-      });
+      const isLikedAndSavedByUser: Post[] = userCreatedPosts.map(
+        (post: Post) => {
+          return {
+            ...post,
+            isLiked: post.likes.length > 0,
+            isSaved: post.savedBy.length > 0,
+          };
+        }
+      );
 
       postsCount = postsLength;
       posts.push(...isLikedAndSavedByUser);
@@ -76,7 +102,7 @@ export async function GET(req: Request, { params: { username } }: Props) {
         },
       });
 
-      const userLikedPosts = await prisma.like.findMany({
+      const userLikedPosts: LikedPosts[] = await prisma.like.findMany({
         skip: (skip - 1) * take,
         take: take,
         where: {
@@ -108,7 +134,7 @@ export async function GET(req: Request, { params: { username } }: Props) {
         },
       });
 
-      const isLikedAndSavedByUser = userLikedPosts.map((p) => {
+      const isLikedAndSavedByUser = userLikedPosts.map((p: LikedPosts) => {
         const { post } = p;
         const newValues = {
           ...post,

@@ -22,30 +22,22 @@ export default function LoginForm() {
     formState: { isSubmitting },
   } = methods;
   const handleLogin: SubmitHandler<LoginCredentials> = async (data) => {
-    try {
-      const loginResponse = await signIn("credentials", {
-        ...data,
-        redirect: false,
-      });
+    const loginResponse = await signIn("credentials", {
+      ...data,
+      redirect: false,
+    });
 
-      if (loginResponse?.error) {
-        toast("Email or password is wrong", {
-          type: "error",
-          theme: "colored",
-          closeOnClick: true,
-        });
-        return
-      }
-      router.push("/");
-    } catch (error) {
-      if (error instanceof Error) {
-        toast(error?.message, {
-          type: "error",
-          theme: "colored",
-          closeOnClick: true,
-        });
-      }
+    // console.log(loginResponse);
+    
+    if (loginResponse?.error) {
+      toast("Email or password is wrong", {
+        type: "error",
+        theme: "colored",
+        closeOnClick: true,
+      });
+      return;
     }
+    router.push("/");
   };
   return (
     <FormProvider {...methods}>

@@ -9,7 +9,7 @@ export async function GET(req: Request, { params: { postId } }: Props) {
   const userId = url.searchParams.get("userId") ?? "";
 
   try {
-    const post = await prisma.post.findUnique({
+    const post: Post = (await prisma.post.findUnique({
       where: {
         id: postId,
       },
@@ -33,7 +33,7 @@ export async function GET(req: Request, { params: { postId } }: Props) {
           },
         },
       },
-    });
+    })) as Post;
 
     if (post) {
       const newValues: Post = {
