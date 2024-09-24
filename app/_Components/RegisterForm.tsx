@@ -10,7 +10,7 @@ import Input from "@/app/_Components/Input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { NextResponse } from "next/server";
+import { signIn } from "next-auth/react";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -26,13 +26,18 @@ export default function RegisterForm() {
 
   const handleRegister: SubmitHandler<NewUserDetails> = async (data) => {
     try {
-      const registerResponse = await regsiterUser(data);
-      console.log(registerResponse.ok);
+      const registerResponse:any = await regsiterUser(data);
+      // console.log(registerResponse.ok);
+      //login if user is new
       if (registerResponse.status === 201) {
-        router.push("/login");
-        reset();
+        await signIn("credentials", {
+          ...data,
+          redirect: false,
+        });
+
+        router.push("/");
       }
-      if (!registerResponse.ok && registerResponse instanceof Error) {
+      if (!registerResponse.ok ) {
         toast(registerResponse?.message, {
           type: "error",
           theme: "colored",
@@ -51,7 +56,7 @@ export default function RegisterForm() {
   return (
     <FormProvider {...methods}>
       <form
-        className="flex flex-col w-7/12 mx-auto"
+        className="flex flex-col w-full px-4 mx-auto md:w-7/12 lg:px-0"
         onSubmit={handleSubmit(handleRegister)}
       >
         <div className="space-y-4">
@@ -79,10 +84,11 @@ export default function RegisterForm() {
             type="password"
             placeholder="please enter your password"
           />
-
-          <PrimaryButton disabled={isSubmitting}>
-            {isSubmitting ? <SpinnerMini /> : "Sign up"}
-          </PrimaryButton>
+          <div className="w-full">
+            <PrimaryButton disabled={isSubmitting}>
+              {isSubmitting ? <SpinnerMini /> : "Sign up"}
+            </PrimaryButton>
+          </div>
 
           <div className="space-x-1 text-off-white">
             <span>Already have an account?</span>

@@ -22,13 +22,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function page({ params: { postId } }: Props) {
   return (
-    <div className="h-full max-w-6xl col-span-2 px-16 py-12">
+    <div className="flex-1 px-4 py-10 md:px-8 xl:px-16">
       <div className="w-full">
         <BackButton />
         <SinglePostInfo postId={postId} />
       </div>
 
-      <h1 className="mb-6 text-2xl font-bold capitalize mt-28">
+      <h1 className="mt-12 mb-6 text-2xl font-bold capitalize lg:mt-28">
         most realated posts
       </h1>
       <div className="relative min-h-80">

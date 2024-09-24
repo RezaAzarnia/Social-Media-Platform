@@ -81,7 +81,7 @@ export default function CreatePostForm() {
 
         <div className="flex justify-end gap-1">
           <button className="px-8 rounded-md bg-dark-4">Cancel</button>
-          <div className="w-[13%]">
+          <div className="w-32">
             <PrimaryButton isLoading={isSubmitting} disabled={isSubmitting}>
               Create Post
             </PrimaryButton>

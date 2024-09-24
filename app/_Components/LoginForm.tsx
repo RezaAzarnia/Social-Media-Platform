@@ -28,21 +28,22 @@ export default function LoginForm() {
     });
 
     // console.log(loginResponse);
-    
+
     if (loginResponse?.error) {
-      toast("Email or password is wrong", {
+      toast("Email or password is wrong!!", {
         type: "error",
         theme: "colored",
         closeOnClick: true,
       });
       return;
+    } else {
+      router.push("/");
     }
-    router.push("/");
   };
   return (
     <FormProvider {...methods}>
       <form
-        className="flex flex-col w-1/2 mx-auto"
+        className="flex flex-col w-full px-4 mx-auto lg:px-0 md:w-7/12"
         onSubmit={handleSubmit(handleLogin)}
       >
         <div className="space-y-6">
@@ -59,10 +60,11 @@ export default function LoginForm() {
             type="password"
             placeholder="please enter your password"
           />
-
-          <PrimaryButton disabled={isSubmitting}>
-            {isSubmitting ? <div className="spinner-mini"></div> : "log in"}
-          </PrimaryButton>
+          <div className="w-full">
+            <PrimaryButton disabled={isSubmitting}>
+              {isSubmitting ? <div className="spinner-mini"></div> : "log in"}
+            </PrimaryButton>
+          </div>
 
           <div className="space-x-1 text-off-white">
             <span>Don&apos;t have an account?</span>

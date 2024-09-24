@@ -19,7 +19,7 @@ export default function Textarea({
   } = useFormContext();
   return (
     <div className="space-y-1">
-      <label className="block text-sm text-left capitalize text-off-white">
+      <label className="label">
         {label}
       </label>
       <textarea

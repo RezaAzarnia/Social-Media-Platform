@@ -13,13 +13,21 @@ export const metadata: Metadata = {
 export default async function page() {
   return (
     <>
-      <div className="px-16 py-12">
+      <div className="flex-1 px-4 py-8 md:px-8 xl:px-16">
         <h1 className="mb-8 text-3xl font-bold capitalize">homes feed</h1>
         <MainPostList />
       </div>
-      <aside className="sticky top-0 right-0 w-full h-screen p-8 space-y-4 text-center border-l border-dark-4">
+      <aside
+        className="overflow-auto xl:overflow-hidden sticky top-0 right-0 hidden h-screen p-8 space-y-4 text-center border-l lg:block border-dark-4 max-w-[250px] xl:max-w-[450px] flex-1
+      [&::-webkit-scrollbar]:w-1
+      [&::-webkit-scrollbar-track]:rounded-full
+      [&::-webkit-scrollbar-thumb]:rounded-full
+      [&::-webkit-scrollbar-track]:bg-transparent
+    [&::-webkit-scrollbar-thumb]:bg-light-purple
+            "
+      >
         <h3 className="text-2xl font-semibold">Top Creators</h3>
-        <div className="grid grid-cols-2 grid-rows-3 gap-3">
+        <div className="grid grid-cols-1 grid-rows-3 gap-3 xl:grid-cols-2">
           <UsersList showFewer={true} />
         </div>
       </aside>

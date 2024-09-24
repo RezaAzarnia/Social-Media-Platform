@@ -24,3 +24,7 @@ export const client = new S3Client({
     secretAccessKey: process.env.LIARA_SECRET_KEY || "",
   },
 });
+
+export const capitalizeFirstLetter = (text: string): string => {
+  return text.charAt(0).toUpperCase();
+};

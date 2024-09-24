@@ -2,11 +2,11 @@ import React from "react";
 
 export default function PostPreviewskeleton() {
   return (
-    <div className="flex flex-wrap gap-6">
+    <div className="grid h-full grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: 6 }, (_, index) => {
         return (
           <div
-            className="relative flex flex-col w-full bg-dark-4 h-80 max-w-80 rounded-3xl animate-pulse"
+            className="relative flex flex-col w-full h-96 md:h-80 rounded-3xl bg-dark-4 animate-pulse"
             key={index + 1}
           >
             {/* Image Skeleton */}

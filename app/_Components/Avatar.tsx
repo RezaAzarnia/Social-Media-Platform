@@ -1,6 +1,6 @@
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
+import { capitalizeFirstLetter } from "../utils/utils";
 
 type Props = {
   user: { name: string; username: string };
@@ -21,16 +21,11 @@ export default function Avatar({
         className={`flex items-center gap-2 ${isVertical && "flex-col  text-center"}`}
       >
         <div
-          className={`${isSmallAvatar ? "w-10 h-10" : "w-12 h-12"} 
-          flex flex-col items-center justify-center 
-          rounded-full  text-black font-semibold
-          bg-light-purple
+          className={`${isSmallAvatar ? "size-10" : "size-12"} 
+         avatar
           `}
-          style={{
-            fontFamily: "Playwrite BE VLG",
-          }}
         >
-          {user?.name.charAt(0).toUpperCase()}
+          {capitalizeFirstLetter(user?.name)}
         </div>
         <div className="flex flex-col">
           <h4 className="text-xl font-semibold">{user?.name}</h4>

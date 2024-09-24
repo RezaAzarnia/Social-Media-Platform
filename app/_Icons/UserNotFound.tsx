@@ -5,8 +5,7 @@ export default function UserNotFound() {
       xmlnsXlink="http://www.w3.org/1999/xlink"
       data-name="Layer 1"
       viewBox="0 0 3000 3000"
-      width={350}
-      height={350}
+      className="w-full max-w-[350px]"
     >
       <defs>
         <linearGradient

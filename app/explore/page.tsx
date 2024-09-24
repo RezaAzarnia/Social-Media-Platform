@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default async function page({ searchParams }: Props) {
   return (
-    <div className="max-w-6xl col-span-2 px-16 py-12 ">
+    <div className="flex-1 px-4 py-12 m-auto md:px-8 xl:px-16">
       <h1 className="mb-8 text-3xl font-bold capitalize">search posts</h1>
       <SearchInput />
       <h1 className="mt-16 text-2xl font-bold capitalize">

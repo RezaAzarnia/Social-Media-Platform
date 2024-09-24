@@ -35,6 +35,7 @@ export async function POST(req: Request): Promise<NextResponse> {
         {
           status: 409,
           message: "This email or username is exist. Please try another one!!",
+          ok: false,
         },
         { status: 409 }
       );
@@ -50,7 +51,7 @@ export async function POST(req: Request): Promise<NextResponse> {
         name,
         username,
         email,
-        bio:"",
+        bio: "",
         password: await hashedPassword(password),
       },
     });
@@ -59,18 +60,18 @@ export async function POST(req: Request): Promise<NextResponse> {
       {
         status: 201,
         message: "user created successfully",
-        ok:true
+        ok: true,
       },
       {
         status: 201,
       }
     );
-  } catch (error:any) {
+  } catch (error: any) {
     return NextResponse.json<HttpResposne>(
       {
         status: 500,
         message: error.message || "Internal Server Error",
-        ok:false
+        ok: false,
       },
       {
         status: 500,

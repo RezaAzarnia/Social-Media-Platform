@@ -34,7 +34,7 @@ export default async function page({ params, searchParams }: Props) {
     profile.isCurrentUserProfile && query === "liked" ? "liked" : "userPosts";
 
   return (
-    <div className="max-w-6xl col-span-2 px-16 py-14">
+    <div className="flex-1 px-4 py-10 md:px-8 xl:px-16">
       <UserProfile username={username} />
 
       <h1 className="mt-12 mb-8 text-3xl font-bold capitalize">

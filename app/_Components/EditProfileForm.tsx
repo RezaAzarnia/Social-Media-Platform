@@ -73,7 +73,7 @@ export default function EditProfileForm({ session }: Props) {
         <Textarea name="bio" defaultValue={session?.bio} />
         <div className="flex justify-end gap-1">
           <button className="px-8 rounded-md bg-dark-4">Cancel</button>
-          <div className="w-[13%]">
+          <div className="w-32">
             <PrimaryButton disabled={isSubmitting} isLoading={isSubmitting}>
               update profile
             </PrimaryButton>
