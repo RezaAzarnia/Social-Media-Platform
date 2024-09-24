@@ -14,7 +14,7 @@ export default function PrimaryButton({
 }: Props) {
   return (
     <button
-      className="w-full py-3 text-center transition-colors rounded-md bg-primary-600 hover:bg-primary-500 disabled:cursor-not-allowed disabled:bg-slate-800 "
+      className={`w-full py-3 text-center transition-colors rounded-md bg-primary-600 hover:bg-primary-500 disabled:cursor-not-allowed disabled:bg-slate-800 `}
       onClick={onClick}
       disabled={disabled}
     >

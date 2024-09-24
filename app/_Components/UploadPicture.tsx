@@ -67,7 +67,7 @@ export default function UploadPicture({ name }: Props) {
   return (
     <>
       <div
-        className="space-y-1 h-[600px] relative w-full"
+        className="space-y-1 h-[400px] md:h-[600px] relative w-full"
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDropPicture}
       >
@@ -75,7 +75,7 @@ export default function UploadPicture({ name }: Props) {
         <div className="h-[95%] text-center bg-dark-3 relative w-full">
           <input
             type="file"
-            className=" w-full text-transparent cursor-pointer m-auto hidden"
+            className="hidden w-full m-auto text-transparent cursor-pointer "
             {...register(name)}
             onChange={inputChangeHandler}
             ref={fileInputRef}
@@ -90,20 +90,20 @@ export default function UploadPicture({ name }: Props) {
                 alt="picture preview"
               />
               <p
-                className="absolute left-0 right-0 w-full py-1 text-center border-t bottom-2 border-slate-500 text-slate-400 cursor-pointer"
+                className="absolute left-0 right-0 w-full py-1 text-center border-t cursor-pointer bottom-2 border-slate-500 text-slate-400"
                 onClick={handleClickFileInput}
               >
                 click or darg photo to replace
               </p>
             </>
           ) : (
-            <div className="absolute flex flex-col items-center gap-2 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
+            <div className="absolute flex flex-col items-center w-full gap-2 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
               <UploadIcon />
               <h3>Drag photos here</h3>
               <span className="text-sm text-light-4">svg , png , jpg</span>
               <div
                 onClick={handleClickFileInput}
-                className="relative px-4 py-3 rounded-md bg-dark-4 text-off-white cursor-pointer"
+                className="relative w-full px-4 py-3 rounded-md cursor-pointer bg-dark-4 text-off-white max-w-fit"
               >
                 select from computer
               </div>

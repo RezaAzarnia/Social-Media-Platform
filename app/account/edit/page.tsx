@@ -12,7 +12,7 @@ export default async function page() {
   const session = await getMe();
 
   return (
-    <div className="max-w-6xl col-span-2 px-16 py-14">
+    <div className="flex-1 px-4 py-12 md:px-8 xl:px-16">
       <h1 className="mb-8 text-3xl font-bold capitalize">edit profile</h1>
       <div className="mt-16">
         <EditProfileForm session={session} />

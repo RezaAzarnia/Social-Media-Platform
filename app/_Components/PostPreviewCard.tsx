@@ -10,7 +10,7 @@ type Props = {
 };
 export default function PostPreviewCard({ post, isShowLike = true }: Props) {
   return (
-    <div className="relative flex flex-col w-full h-80 max-w-80 rounded-3xl">
+    <div className="relative flex flex-col w-full h-96 md:h-80 rounded-3xl">
       <Link href={`/post/${post.id}`} className="relative w-full h-full">
         <Image
           fill

@@ -14,12 +14,12 @@ export const metadata: Metadata = {
 };
 export default async function Page() {
   return (
-    <div className="max-w-6xl col-span-2 px-16 py-12 ">
+    <div className="flex-1 px-4 py-8 md:px-8 xl:px-16">
       <div className="flex items-baseline gap-2 ">
-        <Save width={25} height={25} />
+        <Save  />
         <h1 className="mb-8 text-3xl font-bold capitalize">saved</h1>
       </div>
-      <div className="relative mt-16 min-h-72">
+      <div className="relative mt-4 min-h-72">
         <PostsList
           fetchKey={"/api/post/savedPosts"}
           fetchFunction={getUserSavedPosts}

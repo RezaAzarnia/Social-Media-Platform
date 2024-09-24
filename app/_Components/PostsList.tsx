@@ -3,8 +3,8 @@ import React, { memo } from "react";
 import PostPreviewCard from "./PostPreviewCard";
 import useInfinitScroll from "@/app/_Components/useInfinitScroll";
 import SpinnerMini from "./SpinnerMini";
-import { Post } from "../_types";
 import PostPreviewskeleton from "./PostPreviewskeleton";
+import { Post } from "../_types";
 
 type Props = {
   fetchKey: string;
@@ -42,9 +42,9 @@ function PostsList({
   }
   return (
     <>
-      <div className="flex flex-wrap h-full gap-6">
+      <div className="grid h-full grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {posts.length > 0
-          ? posts?.map((post) => {
+          ? posts.map((post) => {
               return (
                 <PostPreviewCard
                   post={post}

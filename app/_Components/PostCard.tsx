@@ -10,7 +10,7 @@ type Props = {
 };
 export default function PostCard({ post }: Props) {
   return (
-    <div className="flex flex-col max-w-5xl gap-3 p-6 mx-auto my-6 border bg-dark-2 rounded-3xl border-dark-4 ">
+    <div className="flex flex-col gap-3 p-4 mx-auto my-6 border md:p-6 bg-dark-2 rounded-3xl border-dark-4 ">
       <div className="flex items-center justify-between">
         <Avatar user={post.creator}>
           <span className="text-xs text-light-3">
@@ -19,7 +19,7 @@ export default function PostCard({ post }: Props) {
         </Avatar>
       </div>
       <Link href={`/post/${post.id}`}>
-        <div className="relative h-[450px] max-h-[400px] w-full">
+        <div className="relative h-[300px] md:h-[400px] w-full">
           <Image
             src={process.env.NEXT_PUBLIC_PICTURE_URL + post.imageUrl}
             className="h-full mb-2 rounded-3xl"

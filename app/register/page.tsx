@@ -14,20 +14,20 @@ export const metadata: Metadata = {
 
 export default function page() {
   return (
-    <div className="flex">
-      <div className="grow-[.65] content-center text-center space-y-3">
+    <div className="flex flex-1 h-screen">
+      <div className="content-center flex-1 space-y-3 text-center">
         <div className="w-full">
           <Logo />
         </div>
         <div>
-          <h1 className="text-4xl font-bold">create new account </h1>
-          <p className="text-light-3 text-md">
+          <h1 className="text-3xl font-bold md:text-4xl">create new account </h1>
+          <p className="text-sm text-light-3 md:text-md">
             to use snapgram! please enter your deatils.
           </p>
         </div>
         <RegisterForm />
       </div>
-      <div className="relative flex-1">
+      <div className="relative lg:flex-1">
         <Image
           src={loginPicture}
           fill={true}

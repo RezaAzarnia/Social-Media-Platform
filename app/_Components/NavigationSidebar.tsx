@@ -23,7 +23,7 @@ function NavigationSidebar() {
   const pathname = usePathname();
   const { data: user } = useSession();
   return (
-    <aside className="sticky top-0 flex flex-col w-64 h-screen p-4 space-y-8 bg-dark-3 ">
+    <aside className="sticky top-0 flex-col hidden w-64 h-screen p-4 space-y-8 md:flex bg-dark-3 z-[99]">
       <div className="w-40">
         <Logo />
       </div>

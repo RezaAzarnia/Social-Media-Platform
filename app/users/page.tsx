@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 
 async function page() {
   return (
-    <div className="relative max-w-6xl col-span-2 px-16 py-12">
+    <div className="flex-1 px-4 py-12 md:px-8 xl:px-16">
       <h1 className="mb-8 text-3xl font-bold capitalize">all users</h1>
-      <div className="grid grid-cols-3 auto-rows-[210px] gap-5">
+      <div className="grid auto-rows-[210px] gap-5 grid-cols-1  sm:grid-cols-2 xl:grid-cols-3">
         <UsersList />
       </div>
     </div>

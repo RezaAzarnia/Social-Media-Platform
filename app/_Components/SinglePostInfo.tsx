@@ -51,18 +51,21 @@ export default function SinglePostInfo({ postId }: Props) {
   return (
     <>
       {postInfo && (
-        <div className="w-full  h-[400px] border border-dark-4 rounded-md flex gap-3 mt-10">
-          <div className="relative w-1/2">
+        <div className="flex flex-col w-full h-auto gap-3 mt-3 border rounded-md md:mt-10 border-dark-4 lg:flex-row">
+          {/* Image section */}
+          <div className="relative w-full h-80 lg:w-1/2 lg:h-[400px]">
             <Image
               src={process.env.NEXT_PUBLIC_PICTURE_URL + postInfo.imageUrl}
-              alt={postInfo?.caption ?? "this is a post from snappgramm"}
+              alt={postInfo?.caption ?? "This is a post from snappgramm"}
               fill
               priority
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-              className="h-full p-2 rounded-3xl"
+              className="object-cover p-2 rounded-3xl"
             />
           </div>
-          <div className="flex flex-col w-1/2 h-full p-8 rounded-md bg-dark-3">
+
+          {/* Post content section */}
+          <div className="flex flex-col w-full h-auto p-4 rounded-md lg:w-1/2 lg:p-8 bg-dark-3">
             <div className="flex items-start justify-between">
               <Avatar user={postInfo?.creator}>
                 <span className="text-xs text-light-3">
@@ -75,26 +78,25 @@ export default function SinglePostInfo({ postId }: Props) {
               )}
             </div>
 
-            <div className="h-full pt-4">
-              <h3 className="block text-lg font-semibold line-clamp-1">
+            <div className="h-full py-4">
+              <h3 className="block text-base font-semibold lg:text-lg line-clamp-1">
                 {postInfo?.caption}
               </h3>
               <span className="text-xs text-light-3">
-                <span className="text-xs text-light-3">
-                  {postInfo?.hashtags &&
-                    postInfo?.hashtags
-                      .split(",")
-                      .map((item: string, index: number) => {
-                        return (
-                          item.length > 0 && (
-                            <span key={item + index}>#{item.trim()} </span>
-                          )
-                        );
-                      })}
-                </span>
+                {postInfo?.hashtags &&
+                  postInfo?.hashtags
+                    .split(",")
+                    .map((item: string, index: number) => {
+                      return (
+                        item.length > 0 && (
+                          <span key={item + index}>#{item.trim()} </span>
+                        )
+                      );
+                    })}
               </span>
             </div>
 
+            {/* Like and Save buttons */}
             <div className="flex justify-between mt-auto">
               <LikeButton post={postInfo} />
               <SaveButton post={postInfo} />

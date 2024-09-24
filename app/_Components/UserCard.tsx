@@ -12,7 +12,9 @@ function UserCard({ user }: Props) {
       <Avatar user={user} isVertical={true}>
         <span className="text-xs text-light-3">@{user?.username}</span>
       </Avatar>
-      <FollowButton user={user} />
+      <div className="w-24">
+        <FollowButton user={user} />
+      </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import React from "react";
 
 function NotFoundIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width={400} height={400}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-full max-w-[400px]">
     <path
       fill="#fecd3b"
       d="M45.2 292.5c3.7 3.7 8.7 5.9 14.3 5.9 5.6 0 10.6-2.3 14.3-6 3.7-3.7 5.9-8.7 5.9-14.3 0-6.3-2.7-9.9-5.3-13.3-1.9-2.5-3.7-4.9-3.7-8.1 0-1-.8-1.8-1.8-1.8H49.8c-1 0-1.8.8-1.8 1.8 0 3.2-1.8 5.6-3.6 8.1-2.5 3.4-5.3 7.1-5.2 13.4.1 5.6 2.4 10.7 6 14.3z"

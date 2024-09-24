@@ -2,6 +2,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.avatar {
+  @apply flex flex-col items-center justify-center 
+  rounded-full  text-black font-semibold
+  bg-light-purple;
+  font-family: "Playwrite BE VLG";
+}
+.icon {
+  @apply size-5 lg:size-6;
+}
+.tabpane-item {
+  @apply flex items-center justify-center w-1/2 gap-2  py-4 capitalize;
+}
+
 .sidebar-list-item {
   @apply flex items-center gap-3 p-3 rounded-md hover:bg-primary-500 text-white text-[15px];
   &.active {
@@ -15,7 +28,14 @@
     fill: white;
   }
 }
-
+.bottom-Navbar-item {
+  &.active {
+    @apply bg-primary-500 rounded-md;
+  }
+  &.active .icon path {
+    fill: white;
+  }
+}
 .label {
   @apply text-off-white font-semibold block text-left capitalize;
 }
