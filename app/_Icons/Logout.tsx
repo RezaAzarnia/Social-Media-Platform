@@ -3,11 +3,10 @@ import React from "react";
 export default function Logout() {
   return (
     <svg
-      className="size-6"
+      className="icon size-6"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      
     >
       <path
         fill="#877EFF"

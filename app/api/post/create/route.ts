@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       message: postValidation?.error?.flatten().fieldErrors,
     });
   }
-
+  
   const file = body.picture as File;
   const fileName = `${Date.now()}-${randomUUID()}-${file.name}`;
   try {
@@ -34,13 +34,11 @@ export async function POST(req: Request) {
       ContentType: file.type,
     };
 
-    // آپلود فایل به S3
-    await client.send(new PutObjectCommand(uploadParams));
-
+    const res = await client.send(new PutObjectCommand(uploadParams));
     await prisma.post.create({
       data: {
         caption: body.caption as string,
-        imageUrl: `uploads/${fileName}`, // URL نسبی فایل در S3
+        imageUrl: `uploads/${fileName}`,
         creatorId: body.userId as string,
         location: body.location as string,
         hashtags: body.hashtags as string,
@@ -57,6 +55,7 @@ export async function POST(req: Request) {
       }
     );
   } catch (error: any) {
+    console.log(error.message);
     return NextResponse.json(
       {
         status: 500,

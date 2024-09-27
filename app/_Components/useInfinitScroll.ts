@@ -12,7 +12,7 @@ type FecthParams = {
 };
 
 type Props = {
-  fetchKey: string;
+  fetchKey: string | null;
   fetchFunction: (
     params: FecthParams
   ) => Promise<{ posts: Post[]; postsCount: number }>;

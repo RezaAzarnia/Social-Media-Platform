@@ -19,6 +19,9 @@ export async function GET(
           not: userId,
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
         _count: {
           select: {

@@ -7,7 +7,7 @@ import PostPreviewskeleton from "./PostPreviewskeleton";
 import { Post } from "../_types";
 
 type Props = {
-  fetchKey: string;
+  fetchKey: string | null;
 
   fetchFunction: ({
     limit,

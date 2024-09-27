@@ -218,14 +218,16 @@ export async function getSinglePost(
 export async function createNewPost(values: FormData) {
   //added the userId here
   const session = await auth();
-  values.append("userId", session?.userId || "");
-
+  session && values.append("userId", session?.userId );
+// console.log(values);
   const response = await fetch(`${process.env.API_URL}/api/post/create`, {
     method: "POST",
     body: values,
   });
 
+
   const data = await response.json();
+  console.log(data);
   return data;
 }
 

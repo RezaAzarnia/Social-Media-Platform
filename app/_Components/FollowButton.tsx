@@ -23,7 +23,7 @@ export default function FollowButton({ user }: Props) {
 
   return (
     <button
-      className="w-full px-4 py-3 text-sm transition-all rounded-md bg-primary-600 hover:bg-primary-500 "
+      className="w-full px-4 py-2 text-sm transition-all rounded-md bg-primary-600 hover:bg-primary-500 "
       onClick={() => handleFollowToggle(user?.id)}
     >
       {isFollowing ? "following" : "follow" }

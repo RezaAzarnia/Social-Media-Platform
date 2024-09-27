@@ -19,7 +19,6 @@ export default function PostPreviewCard({ post, isShowLike = true }: Props) {
           alt={post.caption}
           className="rounded-2xl h-80"
           priority={true}
-    
         />
       </Link>
       <div className="absolute flex items-center justify-between w-full px-2 pb-1 mt-auto bottom-2">

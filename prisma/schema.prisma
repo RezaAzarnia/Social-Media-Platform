@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -19,8 +19,8 @@ model User {
   saves     Save[]
   followers Follower[] @relation("UserFollowers")
   following Follower[] @relation("UserFollowing")
-
   sessions Session[] @relation("UserSessions")
+  createdAt    DateTime @default(now())
 
   @@unique([email, username])
 }

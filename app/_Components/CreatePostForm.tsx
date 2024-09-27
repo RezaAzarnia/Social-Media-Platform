@@ -33,11 +33,11 @@ export default function CreatePostForm() {
   const router = useRouter();
   const submitForm: SubmitHandler<FormProps> = async (data) => {
     const formData: FormData = new FormData();
-
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value);
     });
     const response = await createNewPost(formData);
+    // console.log(response);
     if (!response.ok) {
       toast.error(response.message, {
         closeOnClick: true,
